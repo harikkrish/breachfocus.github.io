@@ -3,1125 +3,944 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hari · Cyber Security Architect</title>
+<title>BreachFocus — Hari | Cybersecurity Leader & Cloud Security Architect</title>
+<meta name="description" content="Cybersecurity professional specializing in cloud security architecture, threat detection, and enterprise security operations across AWS, Zscaler, CrowdStrike, and Rapid7.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0f1117;
-    --ink-soft: #3d4152;
-    --ink-muted: #8b8fa8;
-    --surface: #fafaf8;
-    --surface-2: #f2f1ee;
-    --surface-3: #e8e6e1;
-    --accent: #c8401a;
-    --accent-light: #f0e8e4;
-    --accent-2: #1a5fc8;
-    --accent-2-light: #e4ecf0;
-    --border: rgba(15,17,23,0.1);
-    --radius: 2px;
-    --shadow: 0 1px 3px rgba(15,17,23,0.08), 0 4px 16px rgba(15,17,23,0.04);
-    --shadow-lg: 0 4px 24px rgba(15,17,23,0.10), 0 12px 48px rgba(15,17,23,0.06);
-  }
+:root {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-dark: #0C1117;
+  --bg-dark-card: #151C25;
+  --text: #1A1D23;
+  --text-secondary: #5A5F6B;
+  --text-muted: #9096A2;
+  --accent: #0066FF;
+  --accent-light: #E8F0FF;
+  --accent-dark: #0047B3;
+  --green: #00875A;
+  --green-light: #E3FCEF;
+  --red: #DE350B;
+  --red-light: #FFEBE6;
+  --amber: #FF991F;
+  --amber-light: #FFF7E6;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --max-w: 1200px;
+  --header-h: 72px;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-  html { scroll-behavior: smooth; }
+/* ---- NAV ---- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--header-h);
+  background: rgba(250,250,248,0.85);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+.nav.scrolled { box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+.nav-inner {
+  max-width: var(--max-w); margin: 0 auto; height: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 18px; color: var(--text);
+  text-decoration: none;
+}
+.nav-logo .logo-icon {
+  width: 36px; height: 36px; background: var(--accent);
+  border-radius: var(--radius-sm); display: flex;
+  align-items: center; justify-content: center;
+  color: white; font-family: var(--font-mono); font-weight: 700;
+  font-size: 14px; letter-spacing: -0.5px;
+}
+.nav-links { display: flex; gap: 2px; align-items: center; }
+.nav-links a {
+  padding: 8px 16px; border-radius: var(--radius-xs);
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  text-decoration: none; transition: all 0.2s;
+}
+.nav-links a:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+.nav-cta {
+  padding: 8px 20px !important; background: var(--text) !important;
+  color: white !important; border-radius: var(--radius-sm) !important;
+}
+.nav-cta:hover { opacity: 0.88 !important; background: var(--text) !important; }
+.mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--surface);
-    color: var(--ink);
-    font-size: 15px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ---- HERO ---- */
+.hero {
+  padding: calc(var(--header-h) + 80px) 2rem 100px;
+  max-width: var(--max-w); margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  align-items: center; min-height: 100vh;
+}
+.hero-text { max-width: 560px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 100px;
+  background: var(--green-light); color: var(--green);
+  font-size: 13px; font-weight: 600; margin-bottom: 24px;
+  letter-spacing: 0.02em;
+}
+.hero-badge .pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); position: relative;
+}
+.hero-badge .pulse::after {
+  content: ''; position: absolute; inset: -3px;
+  border-radius: 50%; border: 2px solid var(--green);
+  animation: pulse-ring 2s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.hero h1 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(40px, 5vw, 56px); line-height: 1.12;
+  letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero-sub {
+  font-size: 18px; line-height: 1.7; color: var(--text-secondary);
+  margin-bottom: 36px; max-width: 480px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s; border: none; cursor: pointer;
+  font-family: var(--font);
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border-strong); }
+.btn-secondary:hover { border-color: var(--text); background: rgba(0,0,0,0.02); }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 40px; height: 60px;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px; letter-spacing: -0.02em; color: var(--ink);
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a {
-    font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
-    text-transform: uppercase; color: var(--ink-soft); text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--accent); }
+/* hero visual */
+.hero-visual {
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+.hero-terminal {
+  width: 100%; max-width: 480px;
+  background: var(--bg-dark); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px; background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+.terminal-dot.r { background: #FF5F57; }
+.terminal-dot.y { background: #FEBC2E; }
+.terminal-dot.g { background: #28C840; }
+.terminal-bar span {
+  margin-left: 12px; font-family: var(--font-mono);
+  font-size: 12px; color: rgba(255,255,255,0.4);
+}
+.terminal-body {
+  padding: 24px; font-family: var(--font-mono); font-size: 13px;
+  line-height: 1.9; color: rgba(255,255,255,0.7); min-height: 260px;
+}
+.terminal-body .prompt { color: var(--accent); }
+.terminal-body .cmd { color: #E2E8F0; }
+.terminal-body .comment { color: rgba(255,255,255,0.3); font-style: italic; }
+.terminal-body .ok { color: #48BB78; }
+.terminal-body .warn { color: #F6AD55; }
+.terminal-body .line { margin-bottom: 4px; }
+.cursor {
+  display: inline-block; width: 8px; height: 16px;
+  background: var(--accent); animation: blink 1.1s step-end infinite;
+  vertical-align: text-bottom; margin-left: 4px;
+}
+@keyframes blink { 50% { opacity: 0; } }
 
-  /* ── SECTIONS ── */
-  section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
-    margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
-  }
-  .section-label::after {
-    content: ''; flex: 1; max-width: 48px; height: 1px; background: var(--accent);
-  }
+/* floating stats */
+.floating-stats {
+  position: absolute; top: -20px; right: -20px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.float-card {
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  padding: 14px 18px; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border); min-width: 160px;
+  animation: float-in 0.8s ease-out both;
+}
+.float-card:nth-child(2) { animation-delay: 0.2s; }
+.float-card:nth-child(3) { animation-delay: 0.4s; }
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.float-card .num {
+  font-size: 22px; font-weight: 700; color: var(--text);
+  font-family: var(--font-mono);
+}
+.float-card .label {
+  font-size: 12px; color: var(--text-muted); margin-top: 2px;
+}
 
-  /* ── HERO ── */
-  #hero {
-    padding-top: 160px; padding-bottom: 120px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-  }
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 400;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted);
-    margin-bottom: 20px;
-  }
-  .hero-eyebrow span {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); margin-right: 8px; vertical-align: middle;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+/* ---- SECTION BASE ---- */
+.section { padding: 100px 2rem; }
+.section-inner { max-width: var(--max-w); margin: 0 auto; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent); font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-label::before {
+  content: ''; width: 20px; height: 2px;
+  background: var(--accent); border-radius: 1px;
+}
+.section-title {
+  font-family: var(--font-display); font-size: clamp(30px,4vw,40px);
+  font-weight: 600; letter-spacing: -0.02em;
+  margin-bottom: 16px; line-height: 1.2;
+}
+.section-desc {
+  font-size: 17px; color: var(--text-secondary);
+  max-width: 640px; line-height: 1.7; margin-bottom: 48px;
+}
+.bg-alt { background: #F3F2EE; }
 
-  h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(48px, 6vw, 72px);
-    line-height: 1.05; letter-spacing: -0.03em; color: var(--ink);
-    margin-bottom: 24px;
-  }
-  h1 em { font-style: italic; color: var(--accent); }
+/* ---- ABOUT ---- */
+.about-grid {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 60px;
+  align-items: start;
+}
+.about-text { font-size: 16px; line-height: 1.8; color: var(--text-secondary); }
+.about-text p + p { margin-top: 16px; }
+.about-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.info-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 20px 24px; border: 1px solid var(--border);
+}
+.info-card .ic-label {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 6px;
+}
+.info-card .ic-value { font-size: 16px; font-weight: 600; color: var(--text); }
 
-  .hero-desc {
-    font-size: 17px; font-weight: 300; color: var(--ink-soft);
-    line-height: 1.7; margin-bottom: 36px; max-width: 420px;
-  }
-  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 24px; font-size: 13px; font-weight: 500;
-    letter-spacing: 0.02em; border-radius: var(--radius);
-    cursor: pointer; text-decoration: none; border: none;
-    transition: all 0.2s;
-  }
-  .btn-primary { background: var(--ink); color: white; }
-  .btn-primary:hover { background: var(--accent); }
-  .btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
-  .btn-outline:hover { border-color: var(--ink); }
+/* ---- SKILLS ---- */
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.skill-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 28px; border: 1px solid var(--border);
+  transition: all 0.25s;
+}
+.skill-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); transform: translateY(-2px); }
+.skill-card-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.skill-icon {
+  width: 44px; height: 44px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.skill-card h3 { font-size: 17px; font-weight: 600; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-tag {
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 13px; font-weight: 500;
+  background: rgba(0,0,0,0.04); color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
 
-  .hero-card {
-    background: white; border: 1px solid var(--border);
-    border-radius: 4px; padding: 28px; box-shadow: var(--shadow-lg);
-    position: relative; overflow: hidden;
-  }
-  .hero-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  }
-  .card-tag {
-    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--accent); background: var(--accent-light);
-    padding: 3px 8px; border-radius: 2px; display: inline-block; margin-bottom: 16px;
-  }
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-  .stat-item { padding: 14px; background: var(--surface-2); border-radius: 2px; }
-  .stat-num {
-    font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink);
-    line-height: 1;
-  }
-  .stat-label { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
-  .stack-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-  .pill {
-    font-family: 'DM Mono', monospace; font-size: 10px; padding: 4px 10px;
-    background: var(--surface-2); border: 1px solid var(--border);
-    border-radius: 20px; color: var(--ink-soft);
-  }
+/* ---- PROJECTS ---- */
+.projects-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+.project-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  overflow: hidden; border: 1px solid var(--border);
+  transition: all 0.25s;
+}
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.project-preview {
+  height: 200px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-preview .preview-pattern {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--bg-dark) 0%, #1a2332 100%);
+}
+.project-preview .preview-label {
+  position: relative; z-index: 1; font-family: var(--font-mono);
+  font-size: 14px; color: rgba(255,255,255,0.7); text-align: center;
+  padding: 20px;
+}
+.project-preview .preview-label .icon { font-size: 32px; margin-bottom: 8px; display: block; }
+.project-body { padding: 24px; }
+.project-body h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.project-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+.project-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.project-tech span {
+  font-family: var(--font-mono); font-size: 12px;
+  padding: 3px 10px; border-radius: 100px;
+  background: var(--accent-light); color: var(--accent-dark);
+}
 
-  /* ── DIVIDER ── */
-  .divider {
-    width: 100%; height: 1px; background: var(--border);
-    max-width: 1100px; margin: 0 auto;
-  }
+/* ---- BLOG ---- */
+.blog-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+.blog-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 28px; border: 1px solid var(--border);
+  transition: all 0.25s; text-decoration: none; color: inherit;
+  display: block;
+}
+.blog-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.blog-meta {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.blog-date {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);
+}
+.blog-tag {
+  padding: 3px 10px; border-radius: 100px; font-size: 12px;
+  font-weight: 600;
+}
+.blog-tag.vuln { background: var(--red-light); color: var(--red); }
+.blog-tag.cloud { background: var(--accent-light); color: var(--accent); }
+.blog-tag.ops { background: var(--green-light); color: var(--green); }
+.blog-tag.threat { background: var(--amber-light); color: var(--amber); }
+.blog-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; line-height: 1.4; }
+.blog-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.blog-card .read-more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 16px; font-size: 14px; font-weight: 600;
+  color: var(--accent); transition: gap 0.2s;
+}
+.blog-card:hover .read-more { gap: 10px; }
 
-  /* ── ABOUT ── */
-  #about { display: grid; grid-template-columns: 5fr 4fr; gap: 80px; align-items: start; }
-  h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.03em;
-    line-height: 1.1; margin-bottom: 24px;
-  }
-  .about-body { font-size: 16px; font-weight: 300; color: var(--ink-soft); line-height: 1.8; }
-  .about-body p + p { margin-top: 16px; }
-  .about-sidebar {}
-  .sidebar-block { padding: 20px; background: white; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 12px; }
-  .sidebar-block h4 { font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 10px; }
-  .cert-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
-  .cert-item:last-child { border-bottom: none; }
-  .cert-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-  .cert-name { font-size: 13px; color: var(--ink-soft); }
+/* ---- CONTACT ---- */
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+  align-items: start;
+}
+.contact-info h3 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+.contact-info p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px; }
+.contact-channels { display: flex; flex-direction: column; gap: 16px; }
+.contact-ch {
+  display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+  background: var(--bg-card); border-radius: var(--radius);
+  border: 1px solid var(--border); text-decoration: none; color: inherit;
+  transition: all 0.2s;
+}
+.contact-ch:hover { box-shadow: var(--shadow-sm); border-color: var(--border-strong); }
+.contact-ch .ch-icon {
+  width: 40px; height: 40px; border-radius: var(--radius-xs);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.contact-ch .ch-label { font-size: 13px; color: var(--text-muted); }
+.contact-ch .ch-value { font-size: 15px; font-weight: 500; }
 
-  /* ── NUCLEI TOOL ── */
-  #nuclei { padding-top: 80px; }
-  .nuclei-header { text-align: center; margin-bottom: 56px; }
-  .nuclei-header h2 { margin-bottom: 12px; }
-  .nuclei-header p { color: var(--ink-muted); font-size: 16px; font-weight: 300; max-width: 520px; margin: 0 auto; }
+.contact-form {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 36px; border: 1px solid var(--border);
+}
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-size: 14px; font-weight: 600;
+  margin-bottom: 8px; color: var(--text);
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 15px;
+  font-family: var(--font); background: var(--bg);
+  color: var(--text); transition: border-color 0.2s;
+  outline: none;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  border-color: var(--accent);
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit {
+  width: 100%; padding: 14px; border: none;
+  background: var(--accent); color: white; font-size: 15px;
+  font-weight: 600; border-radius: var(--radius-sm);
+  cursor: pointer; font-family: var(--font); transition: all 0.2s;
+}
+.form-submit:hover { background: var(--accent-dark); }
 
-  .tool-tabs {
-    display: flex; gap: 0; border: 1px solid var(--border); border-radius: 4px;
-    overflow: hidden; margin-bottom: 32px; background: var(--surface-2);
-  }
-  .tab-btn {
-    flex: 1; padding: 12px 16px; background: transparent; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; color: var(--ink-muted); transition: all 0.2s;
-    border-right: 1px solid var(--border); display: flex; align-items: center;
-    justify-content: center; gap: 7px;
-  }
-  .tab-btn:last-child { border-right: none; }
-  .tab-btn.active { background: white; color: var(--ink); box-shadow: var(--shadow); }
-  .tab-btn svg { width: 14px; height: 14px; }
+/* ---- FOOTER ---- */
+.footer {
+  padding: 48px 2rem; border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+.footer-inner {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-copy { font-size: 14px; color: var(--text-muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 14px; color: var(--text-secondary);
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
 
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+/* ---- ANIMATIONS ---- */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-  .tool-card {
-    background: white; border: 1px solid var(--border); border-radius: 4px;
-    overflow: hidden; box-shadow: var(--shadow);
+/* ---- RESPONSIVE ---- */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 48px; text-align: center; min-height: auto; padding-bottom: 60px; }
+  .hero-text { max-width: 100%; }
+  .hero-sub { max-width: 100%; margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
+  .floating-stats { position: static; flex-direction: row; justify-content: center; margin-top: 20px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .mobile-toggle { display: block; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: absolute;
+    top: var(--header-h); left: 0; right: 0;
+    background: rgba(250,250,248,0.98); backdrop-filter: blur(20px);
+    padding: 16px; border-bottom: 1px solid var(--border);
   }
-  .tool-card-header {
-    padding: 20px 24px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface);
-  }
-  .tool-card-title { font-size: 13px; font-weight: 500; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-  .tool-card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; }
-  .tool-card-body { padding: 24px; }
-
-  /* CVE Scanner */
-  .scan-form { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-bottom: 20px; }
-  .scan-input {
-    padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius);
-    font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink);
-    background: var(--surface); outline: none; transition: border-color 0.2s;
-  }
-  .scan-input:focus { border-color: var(--accent-2); }
-  .cve-select {
-    padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius);
-    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
-    background: var(--surface); outline: none; cursor: pointer; min-width: 180px;
-  }
-  .scan-result { background: var(--surface-2); border-radius: 2px; padding: 16px; min-height: 120px; }
-  .result-line { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-soft); line-height: 1.8; }
-  .result-line.hit { color: var(--accent); }
-  .result-line.ok { color: #2ecc71; }
-  .result-line.info { color: var(--accent-2); }
-  .severity-badge {
-    display: inline-block; padding: 2px 8px; border-radius: 2px; font-family: 'DM Mono', monospace;
-    font-size: 10px; font-weight: 500; text-transform: uppercase;
-  }
-  .sev-critical { background: #fee2e2; color: #dc2626; }
-  .sev-high { background: #ffedd5; color: #ea580c; }
-  .sev-medium { background: #fef9c3; color: #ca8a04; }
-  .sev-low { background: #dcfce7; color: #16a34a; }
-
-  .cve-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .cve-card {
-    padding: 14px; border: 1.5px solid var(--border); border-radius: 2px;
-    cursor: pointer; transition: all 0.15s; background: white;
-  }
-  .cve-card:hover, .cve-card.selected { border-color: var(--accent-2); background: var(--accent-2-light); }
-  .cve-card-id { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--accent-2); margin-bottom: 4px; }
-  .cve-card-name { font-size: 13px; color: var(--ink); margin-bottom: 8px; }
-
-  /* Template Builder */
-  .builder-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .builder-left, .builder-right {}
-  .builder-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .form-group { margin-bottom: 10px; }
-  .form-group label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; }
-  .form-control {
-    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
-    border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 13px;
-    color: var(--ink); background: var(--surface); outline: none; transition: border-color 0.2s;
-  }
-  .form-control:focus { border-color: var(--accent-2); }
-  select.form-control { cursor: pointer; }
-  .yaml-output {
-    width: 100%; background: #0f1117; color: #a8d8a8; font-family: 'DM Mono', monospace;
-    font-size: 12px; line-height: 1.7; padding: 16px; border-radius: 2px;
-    border: none; resize: none; height: 380px; outline: none;
-  }
-  .yaml-token-id { color: #7eb8f7; }
-  .yaml-token-key { color: #f7c97e; }
-  .yaml-token-val { color: #a8d8a8; }
-
-  /* Template Library */
-  .lib-filter { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .filter-chip {
-    padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 20px;
-    font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s;
-    background: white; color: var(--ink-soft);
-  }
-  .filter-chip.active { background: var(--ink); color: white; border-color: var(--ink); }
-  .lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-  .lib-card {
-    padding: 18px; border: 1px solid var(--border); border-radius: 4px;
-    background: white; transition: all 0.15s; cursor: pointer;
-  }
-  .lib-card:hover { border-color: var(--ink-soft); box-shadow: var(--shadow); transform: translateY(-1px); }
-  .lib-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
-  .lib-card-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent-2); }
-  .lib-card-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
-  .lib-card-desc { font-size: 12px; color: var(--ink-muted); line-height: 1.5; margin-bottom: 12px; }
-  .lib-card-footer { display: flex; align-items: center; justify-content: space-between; }
-  .lib-card-tags { display: flex; gap: 4px; }
-  .lib-tag { font-size: 10px; padding: 2px 8px; background: var(--surface-2); border-radius: 10px; color: var(--ink-muted); font-family: 'DM Mono', monospace; }
-
-  /* Scan Runner */
-  .runner-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .runner-config {}
-  .runner-terminal {
-    background: #0f1117; border-radius: 2px; padding: 16px; min-height: 320px;
-    font-family: 'DM Mono', monospace; font-size: 12px; overflow-y: auto;
-  }
-  .terminal-bar {
-    display: flex; align-items: center; gap: 6px; margin-bottom: 14px;
-    padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .t-red { background: #ff5f57; }
-  .t-yellow { background: #febc2e; }
-  .t-green { background: #28c840; }
-  .terminal-title { font-size: 10px; color: rgba(255,255,255,0.3); margin-left: 6px; letter-spacing: 0.05em; }
-  .t-line { line-height: 1.8; }
-  .t-muted { color: rgba(255,255,255,0.25); }
-  .t-prompt { color: #7eb8f7; }
-  .t-cmd { color: #f0f0f0; }
-  .t-ok { color: #28c840; }
-  .t-warn { color: #febc2e; }
-  .t-err { color: #ff5f57; }
-  .t-info { color: #a8d8a8; }
-  .t-dim { color: rgba(255,255,255,0.4); }
-  .progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 12px 0; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, #28c840, #7eb8f7); border-radius: 2px; transition: width 0.4s; }
-
-  /* ── BLOG ── */
-  #blog {}
-  .blog-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
-  .blog-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; }
-  .blog-card {
-    background: white; border: 1px solid var(--border); border-radius: 4px;
-    overflow: hidden; transition: all 0.2s; cursor: pointer;
-  }
-  .blog-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-  .blog-card-img {
-    height: 200px; background: var(--surface-2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 48px; position: relative; overflow: hidden;
-  }
-  .blog-card:first-child .blog-card-img { height: 240px; }
-  .blog-card-img::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 60%, rgba(15,17,23,0.08));
-  }
-  .blog-card-body { padding: 20px; }
-  .blog-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .blog-cat {
-    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent); background: var(--accent-light);
-    padding: 2px 8px; border-radius: 2px;
-  }
-  .blog-date { font-size: 12px; color: var(--ink-muted); }
-  .blog-title { font-family: 'DM Serif Display', serif; font-size: 18px; line-height: 1.3; color: var(--ink); margin-bottom: 8px; }
-  .blog-card:first-child .blog-title { font-size: 22px; }
-  .blog-excerpt { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
-
-  /* ── CONTACT ── */
-  #contact { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-  .contact-left h2 { margin-bottom: 16px; }
-  .contact-left p { font-size: 16px; font-weight: 300; color: var(--ink-soft); line-height: 1.7; margin-bottom: 32px; }
-  .social-links { display: flex; flex-direction: column; gap: 12px; }
-  .social-link {
-    display: flex; align-items: center; gap: 14px; padding: 14px 18px;
-    background: white; border: 1px solid var(--border); border-radius: 4px;
-    text-decoration: none; color: var(--ink); transition: all 0.15s;
-  }
-  .social-link:hover { border-color: var(--ink); box-shadow: var(--shadow); }
-  .social-icon { width: 36px; height: 36px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .social-name { font-size: 14px; font-weight: 500; }
-  .social-handle { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-muted); margin-top: 1px; }
-
-  .contact-form {}
-  .contact-form .form-group { margin-bottom: 14px; }
-  .contact-form label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 6px; color: var(--ink-soft); }
-  .contact-form .form-control { width: 100%; }
-  textarea.form-control { resize: vertical; min-height: 120px; font-family: 'DM Sans', sans-serif; }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border); padding: 32px 40px;
-    display: flex; align-items: center; justify-content: space-between;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .footer-copy { font-size: 13px; color: var(--ink-muted); }
-  .footer-copy strong { color: var(--ink); font-family: 'DM Serif Display', serif; font-weight: 400; }
-  .footer-stack { display: flex; gap: 8px; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-  .animate { animation: fadeUp 0.6s ease forwards; }
-  .delay-1 { animation-delay: 0.1s; }
-  .delay-2 { animation-delay: 0.2s; }
-  .delay-3 { animation-delay: 0.3s; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    #hero { grid-template-columns: 1fr; padding-top: 120px; }
-    #about, #contact { grid-template-columns: 1fr; }
-    .blog-grid { grid-template-columns: 1fr; }
-    .builder-layout, .runner-layout { grid-template-columns: 1fr; }
-    section { padding: 60px 20px; }
-    .scan-form { grid-template-columns: 1fr; }
-    .tool-tabs { overflow-x: auto; }
-  }
-
-  /* notification toast */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px; z-index: 999;
-    background: var(--ink); color: white; padding: 12px 20px;
-    border-radius: 4px; font-size: 13px; box-shadow: var(--shadow-lg);
-    transform: translateY(60px); opacity: 0; transition: all 0.3s;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
+  .skills-grid, .projects-grid, .blog-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a class="nav-logo" href="#hero">Hari<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#nuclei">Nuclei Lab</a></li>
-    <li><a href="#blog">Writing</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">BF</div>
+      BreachFocus
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#blog">Insights</a>
+      <a href="#contact" class="nav-cta">Get in touch</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
 </nav>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="animate">
-    <p class="hero-eyebrow"><span></span>Available for security consulting</p>
-    <h1>Security<br><em>Engineer</em><br>& Architect.</h1>
-    <p class="hero-desc">
-      Hari is a cybersecurity professional specializing in cloud security, vulnerability management, and enterprise InfoSec architecture — currently based in Budapest.
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-badge"><span class="pulse"></span> Available for consulting</div>
+    <h1>Securing cloud infrastructure <span class="accent">at scale</span></h1>
+    <p class="hero-sub">
+      Cybersecurity leader with deep expertise in cloud security architecture, threat detection & response, and enterprise security operations — protecting environments spanning 120+ AWS accounts.
     </p>
-    <div class="hero-cta">
-      <a href="#nuclei" class="btn btn-primary">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
-        Open Nuclei Lab
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contact me
       </a>
-      <a href="#about" class="btn btn-outline">About me</a>
+      <a href="#projects" class="btn btn-secondary">View projects &darr;</a>
     </div>
   </div>
-  <div class="animate delay-2">
-    <div class="hero-card">
-      <div class="card-tag">Current Stack</div>
-      <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">Enterprise InfoSec environment across 120+ AWS accounts</div>
-      <div class="stack-pills">
-        <span class="pill">CrowdStrike</span>
-        <span class="pill">Rapid7 IDR</span>
-        <span class="pill">Rapid7 InsightVM</span>
-        <span class="pill">Zscaler</span>
-        <span class="pill">BeyondTrust</span>
-        <span class="pill">Abnormal Security</span>
-        <span class="pill">Palo Alto</span>
-        <span class="pill">Fortinet</span>
-        <span class="pill">AWS Security Hub</span>
-        <span class="pill">InsightConnect</span>
+  <div class="hero-visual">
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span>
+        <span class="terminal-dot y"></span>
+        <span class="terminal-dot g"></span>
+        <span>breachfocus ~ security-ops</span>
       </div>
-      <div class="stat-grid">
-        <div class="stat-item">
-          <div class="stat-num">120+</div>
-          <div class="stat-label">AWS Accounts managed</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">8+</div>
-          <div class="stat-label">Years in InfoSec</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">3</div>
-          <div class="stat-label">Years in Budapest</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">∞</div>
-          <div class="stat-label">CVEs tracked</div>
-        </div>
+      <div class="terminal-body" id="terminalBody">
+        <div class="line"><span class="prompt">$</span> <span class="cmd">whoami</span></div>
+        <div class="line"><span class="ok">hari</span> <span class="comment">// cybersecurity architect</span></div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="prompt">$</span> <span class="cmd">cat /etc/stack</span></div>
+        <div class="line">CrowdStrike &middot; Rapid7 &middot; Zscaler</div>
+        <div class="line">AWS (120 accounts) &middot; Palo Alto</div>
+        <div class="line">BeyondTrust &middot; Abnormal Security</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="prompt">$</span> <span class="cmd">uptime --career</span></div>
+        <div class="line"><span class="ok">10+ years</span> <span class="comment">// zero critical breaches</span></div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="prompt">$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+    <div class="floating-stats">
+      <div class="float-card">
+        <div class="num">120+</div>
+        <div class="label">AWS accounts managed</div>
+      </div>
+      <div class="float-card">
+        <div class="num">10+</div>
+        <div class="label">Security tools in stack</div>
+      </div>
+      <div class="float-card">
+        <div class="num">24/7</div>
+        <div class="label">Threat monitoring</div>
       </div>
     </div>
   </div>
 </section>
-
-<div class="divider"></div>
 
 <!-- ABOUT -->
-<section id="about">
-  <div>
-    <div class="section-label">About</div>
-    <h2>Building resilient<br>security systems.</h2>
-    <div class="about-body">
-      <p>
-        I'm a cybersecurity engineer with deep operational experience across enterprise security tooling, cloud architecture, and vulnerability management. Currently managing a mature InfoSec stack, where I oversee security operations across a complex AWS environment spanning 120+ accounts.
-      </p>
-      <p>
-        My work lives at the intersection of engineering and security — whether that's designing IAM policies at scale, building detection playbooks in Rapid7 InsightConnect, tuning CrowdStrike policies, or hunting vulnerabilities with Nuclei templates.
-      </p>
-      <p>
-        Based in Budapest for the past three years, I'm passionate about the craft of security engineering and sharing tools that make vulnerability research more accessible.
-      </p>
-    </div>
-  </div>
-  <div class="about-sidebar">
-    <div class="sidebar-block">
-      <h4>Certifications</h4>
-      <div class="cert-item"><div class="cert-dot"></div><span class="cert-name">AWS Certified Security – Specialty</span></div>
-      <div class="cert-item"><div class="cert-dot"></div><span class="cert-name">CompTIA Security+</span></div>
-      <div class="cert-item"><div class="cert-dot"></div><span class="cert-name">CrowdStrike Certified Falcon Admin</span></div>
-      <div class="cert-item"><div class="cert-dot"></div><span class="cert-name">Rapid7 Certified</span></div>
-    </div>
-    <div class="sidebar-block">
-      <h4>Focus Areas</h4>
-      <div class="stack-pills" style="gap:6px">
-        <span class="pill">Cloud Security</span>
-        <span class="pill">Threat Detection</span>
-        <span class="pill">Vuln Management</span>
-        <span class="pill">IAM</span>
-        <span class="pill">SOAR</span>
-        <span class="pill">Nuclei</span>
-        <span class="pill">Patch Management</span>
+<section class="section bg-alt" id="about">
+  <div class="section-inner">
+    <div class="section-label">About me</div>
+    <div class="section-title">Building resilient security programs</div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>
+          I'm a cybersecurity professional specializing in cloud security architecture and enterprise security operations. Currently based in Budapest, Hungary, I manage a comprehensive InfoSec program spanning endpoint detection and response, vulnerability management, identity security, network security, and cloud workload protection.
+        </p>
+        <p>
+          My day-to-day involves operating and optimizing a mature security stack including CrowdStrike Falcon, Rapid7 InsightIDR/InsightVM/InsightConnect, Zscaler, BeyondTrust, Abnormal Security, and Palo Alto/Fortinet firewalls — all protecting an extensive AWS environment of 120+ accounts with hundreds of Linux and Windows servers.
+        </p>
+        <p>
+          I'm passionate about closing visibility gaps, automating security workflows, and translating complex threat landscapes into actionable strategy. Whether it's investigating suspicious emails, analyzing vulnerability exploitation trends, or building custom security tools — I focus on outcomes that measurably reduce risk.
+        </p>
       </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- NUCLEI LAB -->
-<section id="nuclei">
-  <div class="nuclei-header">
-    <div class="section-label" style="justify-content:center">Nuclei Lab</div>
-    <h2>Vulnerability Scanner<br>& Template Workshop</h2>
-    <p>Scan targets using Nuclei templates, browse the CVE library, build custom templates, or run the full scanner — all from your browser.</p>
-  </div>
-
-  <div class="tool-tabs">
-    <button class="tab-btn active" onclick="switchTab('cve-scan')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
-      CVE Scanner
-    </button>
-    <button class="tab-btn" onclick="switchTab('template-builder')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M5 8h6M5 5h3M5 11h4"/></svg>
-      Template Builder
-    </button>
-    <button class="tab-btn" onclick="switchTab('template-library')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-      Template Library
-    </button>
-    <button class="tab-btn" onclick="switchTab('scan-runner')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="4,2 14,8 4,14"/></svg>
-      Scan Runner
-    </button>
-  </div>
-
-  <!-- CVE SCANNER -->
-  <div class="tab-panel active" id="panel-cve-scan">
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <div class="tool-card-title"><div class="dot"></div> CVE Lookup & Scanner</div>
-        <span class="severity-badge sev-critical" id="scan-severity-badge" style="display:none"></span>
-      </div>
-      <div class="tool-card-body">
-        <div class="scan-form">
-          <input class="scan-input" type="text" id="scan-target" placeholder="https://target.example.com" />
-          <select class="cve-select" id="cve-select">
-            <option value="">Select CVE / Template</option>
-            <option value="CVE-2021-44228" data-sev="critical">CVE-2021-44228 · Log4Shell (Critical)</option>
-            <option value="CVE-2022-26134" data-sev="critical">CVE-2022-26134 · Confluence RCE (Critical)</option>
-            <option value="CVE-2023-34362" data-sev="critical">CVE-2023-34362 · MOVEit SQLi (Critical)</option>
-            <option value="CVE-2021-26855" data-sev="critical">CVE-2021-26855 · Exchange ProxyLogon (Critical)</option>
-            <option value="CVE-2022-22965" data-sev="high">CVE-2022-22965 · Spring4Shell (High)</option>
-            <option value="CVE-2021-21985" data-sev="high">CVE-2021-21985 · VMware vCenter (High)</option>
-            <option value="CVE-2022-47966" data-sev="high">CVE-2022-47966 · ManageEngine RCE (High)</option>
-            <option value="CVE-2023-23397" data-sev="high">CVE-2023-23397 · Outlook NTLM (High)</option>
-            <option value="CVE-2022-1388" data-sev="high">CVE-2022-1388 · BIG-IP Auth Bypass (High)</option>
-            <option value="CVE-2021-40444" data-sev="medium">CVE-2021-40444 · MSHTML (Medium)</option>
-          </select>
-          <button class="btn btn-primary" onclick="runCveScan()">Scan</button>
+      <div class="about-sidebar">
+        <div class="info-card">
+          <div class="ic-label">Location</div>
+          <div class="ic-value">Budapest, Hungary</div>
         </div>
-        <div class="scan-result" id="scan-result">
-          <div class="result-line t-muted" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)">
-            Select a CVE and enter a target URL to begin scanning...
-          </div>
+        <div class="info-card">
+          <div class="ic-label">Focus area</div>
+          <div class="ic-value">Cloud Security &amp; SecOps</div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TEMPLATE BUILDER -->
-  <div class="tab-panel" id="panel-template-builder">
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <div class="tool-card-title"><div class="dot"></div> Nuclei Template Builder</div>
-        <button class="btn btn-outline" style="font-size:12px;padding:6px 14px" onclick="copyYaml()">Copy YAML</button>
-      </div>
-      <div class="tool-card-body">
-        <div class="builder-layout">
-          <div class="builder-left">
-            <div class="builder-label">Template Configuration</div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Template ID</label>
-                <input class="form-control" id="tmpl-id" type="text" placeholder="my-template-001" oninput="generateYaml()">
-              </div>
-              <div class="form-group">
-                <label>Severity</label>
-                <select class="form-control" id="tmpl-sev" onchange="generateYaml()">
-                  <option>critical</option><option>high</option><option selected>medium</option><option>low</option><option>info</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Template Name</label>
-              <input class="form-control" id="tmpl-name" type="text" placeholder="Apache Struts RCE Detection" oninput="generateYaml()">
-            </div>
-            <div class="form-group">
-              <label>Author</label>
-              <input class="form-control" id="tmpl-author" type="text" value="hari" oninput="generateYaml()">
-            </div>
-            <div class="form-group">
-              <label>Tags (comma-separated)</label>
-              <input class="form-control" id="tmpl-tags" type="text" placeholder="cve,rce,apache" oninput="generateYaml()">
-            </div>
-            <div class="form-group">
-              <label>Target URL Path</label>
-              <input class="form-control" id="tmpl-path" type="text" placeholder="/struts/example/Hello.action" oninput="generateYaml()">
-            </div>
-            <div class="form-group">
-              <label>HTTP Method</label>
-              <select class="form-control" id="tmpl-method" onchange="generateYaml()">
-                <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Matcher — Response Contains</label>
-              <input class="form-control" id="tmpl-matcher" type="text" placeholder="root:x:0:0" oninput="generateYaml()">
-            </div>
-            <div class="form-group">
-              <label>CVE Reference</label>
-              <input class="form-control" id="tmpl-cve" type="text" placeholder="CVE-2021-XXXXX" oninput="generateYaml()">
-            </div>
-          </div>
-          <div class="builder-right">
-            <div class="builder-label">Generated YAML</div>
-            <textarea class="yaml-output" id="yaml-output" readonly></textarea>
-          </div>
+        <div class="info-card">
+          <div class="ic-label">Industry</div>
+          <div class="ic-value">Life Sciences / Pharma</div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TEMPLATE LIBRARY -->
-  <div class="tab-panel" id="panel-template-library">
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <div class="tool-card-title"><div class="dot"></div> Community Template Library</div>
-        <span style="font-size:12px;color:var(--ink-muted);font-family:'DM Mono',monospace">247 templates</span>
-      </div>
-      <div class="tool-card-body">
-        <div class="lib-filter">
-          <button class="filter-chip active" onclick="filterLib(this,'all')">All</button>
-          <button class="filter-chip" onclick="filterLib(this,'rce')">RCE</button>
-          <button class="filter-chip" onclick="filterLib(this,'sqli')">SQLi</button>
-          <button class="filter-chip" onclick="filterLib(this,'ssrf')">SSRF</button>
-          <button class="filter-chip" onclick="filterLib(this,'xss')">XSS</button>
-          <button class="filter-chip" onclick="filterLib(this,'auth')">Auth Bypass</button>
-          <button class="filter-chip" onclick="filterLib(this,'info')">Info Disclosure</button>
-        </div>
-        <div class="lib-grid" id="lib-grid"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCAN RUNNER -->
-  <div class="tab-panel" id="panel-scan-runner">
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <div class="tool-card-title"><div class="dot"></div> Nuclei Scan Runner</div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-outline" style="font-size:12px;padding:6px 14px" onclick="clearTerminal()">Clear</button>
-          <button class="btn btn-primary" style="font-size:12px;padding:6px 14px" onclick="runFullScan()">▶ Run Scan</button>
-        </div>
-      </div>
-      <div class="tool-card-body">
-        <div class="runner-layout">
-          <div class="runner-config">
-            <div class="form-group">
-              <label style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;display:block">Target</label>
-              <input class="form-control" id="runner-target" type="text" placeholder="https://target.example.com">
-            </div>
-            <div class="form-group">
-              <label style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;display:block">Templates</label>
-              <select class="form-control" id="runner-templates">
-                <option>All CVE Templates</option>
-                <option>Critical Severity</option>
-                <option>High Severity</option>
-                <option>Custom Templates</option>
-                <option>Network Templates</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;display:block">Concurrency</label>
-              <input class="form-control" type="range" id="runner-conc" min="1" max="50" value="25" oninput="document.getElementById('conc-val').textContent=this.value">
-            </div>
-            <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted);margin-bottom:14px">Concurrency: <span id="conc-val">25</span></div>
-            <div class="form-group">
-              <label style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;display:block">Rate Limit (req/s)</label>
-              <select class="form-control">
-                <option>150</option><option>300</option><option>500</option><option>Unlimited</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;display:block">Output Format</label>
-              <select class="form-control">
-                <option>JSON</option><option>SARIF</option><option>Markdown</option><option>Plain Text</option>
-              </select>
-            </div>
-            <div style="background:var(--accent-light);border:1px solid rgba(200,64,26,0.2);border-radius:2px;padding:12px;margin-top:8px">
-              <div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:4px">⚠ Responsible Use</div>
-              <div style="font-size:11px;color:var(--ink-soft);line-height:1.5">Only scan targets you own or have explicit written permission to test. Unauthorized scanning is illegal.</div>
-            </div>
-          </div>
-          <div>
-            <div class="runner-terminal" id="runner-terminal">
-              <div class="terminal-bar">
-                <div class="terminal-dot t-red"></div>
-                <div class="terminal-dot t-yellow"></div>
-                <div class="terminal-dot t-green"></div>
-                <span class="terminal-title">nuclei — scan terminal</span>
-              </div>
-              <div class="t-line t-muted">Nuclei v3.1.0 — ready</div>
-              <div class="t-line t-muted">Configure target and press Run Scan to start.</div>
-            </div>
-            <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" id="runner-progress" style="width:0%"></div></div>
-            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);margin-top:6px" id="runner-status">Ready</div>
-          </div>
+        <div class="info-card">
+          <div class="ic-label">Open to</div>
+          <div class="ic-value">Consulting &amp; Advisory</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <div class="section-inner">
+    <div class="section-label">Skills &amp; expertise</div>
+    <div class="section-title">Enterprise security stack</div>
+    <div class="section-desc">Deep operational expertise across the full security lifecycle — from prevention and detection through investigation and response.</div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: var(--accent-light); color: var(--accent);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Endpoint security</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">CrowdStrike Falcon</span>
+          <span class="skill-tag">Rapid7 IDR</span>
+          <span class="skill-tag">EDR/XDR</span>
+          <span class="skill-tag">Agent deployment</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: var(--green-light); color: var(--green);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3>Vulnerability management</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">Rapid7 InsightVM</span>
+          <span class="skill-tag">Wiz</span>
+          <span class="skill-tag">Patch management</span>
+          <span class="skill-tag">CVE analysis</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: #F0E6FF; color: #7C3AED;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3>Cloud security (AWS)</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">120+ accounts</span>
+          <span class="skill-tag">IAM</span>
+          <span class="skill-tag">GuardDuty</span>
+          <span class="skill-tag">S3 / ECS</span>
+          <span class="skill-tag">Cross-account arch</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: var(--amber-light); color: var(--amber);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Network security</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">Zscaler (ZIA/ZPA)</span>
+          <span class="skill-tag">Palo Alto</span>
+          <span class="skill-tag">Fortinet</span>
+          <span class="skill-tag">SSL inspection</span>
+          <span class="skill-tag">PCAP analysis</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: var(--red-light); color: var(--red);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>Identity &amp; access</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">BeyondTrust</span>
+          <span class="skill-tag">LastPass</span>
+          <span class="skill-tag">Kerberos</span>
+          <span class="skill-tag">PAM</span>
+          <span class="skill-tag">SSO/MFA</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-card-header">
+          <div class="skill-icon" style="background: #E0F7FA; color: #00838F;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Security automation</h3>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">InsightConnect</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">SOAR</span>
+          <span class="skill-tag">Custom tooling</span>
+          <span class="skill-tag">API integrations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section bg-alt" id="projects">
+  <div class="section-inner">
+    <div class="section-label">Projects &amp; tools</div>
+    <div class="section-title">Built to solve real problems</div>
+    <div class="section-desc">Custom tools and projects built from hands-on security operations experience.</div>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-pattern"></div>
+          <div class="preview-label">
+            <span class="icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </span>
+            PCAP Analyzer
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>Browser-based PCAP analyzer</h3>
+          <p>AI-powered packet capture analysis tool that parses PCAP files directly in the browser, identifying suspicious traffic patterns, DGA domains, protocol anomalies, and generates visual network flow maps.</p>
+          <div class="project-tech">
+            <span>JavaScript</span>
+            <span>Claude API</span>
+            <span>D3.js</span>
+            <span>WebAssembly</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-pattern" style="background: linear-gradient(135deg, #1a1040 0%, #2d1b69 100%);"></div>
+          <div class="preview-label">
+            <span class="icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </span>
+            MITRE ATT&CK Mapper
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>MITRE ATT&CK flow visualizer</h3>
+          <p>Interactive web application that creates visual diagrams and flow maps of the MITRE ATT&CK framework, enabling security teams to map adversary TTPs and identify detection coverage gaps.</p>
+          <div class="project-tech">
+            <span>React</span>
+            <span>D3.js</span>
+            <span>MITRE API</span>
+            <span>SVG</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-pattern" style="background: linear-gradient(135deg, #0a2540 0%, #134e7a 100%);"></div>
+          <div class="preview-label">
+            <span class="icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </span>
+            Agent Coverage
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>Agent coverage gap analyzer</h3>
+          <p>Python-based tool that cross-references Rapid7 and CrowdStrike agent deployments across the entire server estate, identifying coverage gaps and generating remediation reports by OS and environment.</p>
+          <div class="project-tech">
+            <span>Python</span>
+            <span>Rapid7 API</span>
+            <span>CrowdStrike API</span>
+            <span>Pandas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-preview">
+          <div class="preview-pattern" style="background: linear-gradient(135deg, #1b2a1b 0%, #2d5a2d 100%);"></div>
+          <div class="preview-label">
+            <span class="icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </span>
+            Vuln Trends
+          </div>
+        </div>
+        <div class="project-body">
+          <h3>Time-to-exploit trend analyzer</h3>
+          <p>Data analysis pipeline that tracks CVE exploitation timelines, identifying trends in time-to-exploit metrics and generating insights for proactive patch prioritization and risk communication.</p>
+          <div class="project-tech">
+            <span>Python</span>
+            <span>NVD API</span>
+            <span>CISA KEV</span>
+            <span>Matplotlib</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- BLOG -->
-<section id="blog">
-  <div class="blog-header">
-    <div>
-      <div class="section-label">Writing</div>
-      <h2>Security insights<br>& field notes.</h2>
-    </div>
-    <a href="#" class="btn btn-outline">All posts →</a>
-  </div>
-  <div class="blog-grid">
-    <div class="blog-card">
-      <div class="blog-card-img" style="background:linear-gradient(135deg,#fef3ee,#fee4d8)">🛡️</div>
-      <div class="blog-card-body">
+<section class="section" id="blog">
+  <div class="section-inner">
+    <div class="section-label">Insights &amp; writing</div>
+    <div class="section-title">From the trenches</div>
+    <div class="section-desc">Practical perspectives on cybersecurity operations, cloud security, and threat landscape analysis.</div>
+    <div class="blog-grid">
+
+      <a class="blog-card reveal" href="#">
         <div class="blog-meta">
-          <span class="blog-cat">Vulnerability Research</span>
-          <span class="blog-date">Mar 2025</span>
+          <span class="blog-date">2026-03</span>
+          <span class="blog-tag vuln">Vulnerabilities</span>
         </div>
-        <div class="blog-title">Time-to-Exploit: How Fast Are Attackers Moving in 2025?</div>
-        <div class="blog-excerpt">An analysis of exploitation trends across 200+ CVEs — median time from disclosure to active exploitation is now under 72 hours for critical vulnerabilities.</div>
-      </div>
-    </div>
-    <div class="blog-card">
-      <div class="blog-card-img" style="background:linear-gradient(135deg,#eef3fe,#d8e4fe)">☁️</div>
-      <div class="blog-card-body">
+        <h3>Time-to-exploit is shrinking: what your patch SLA should look like in 2026</h3>
+        <p>Analysis of CVE exploitation trends showing that adversaries are weaponizing vulnerabilities faster than ever, and what that means for your patching strategy.</p>
+        <span class="read-more">Read more &rarr;</span>
+      </a>
+
+      <a class="blog-card reveal" href="#">
         <div class="blog-meta">
-          <span class="blog-cat">Cloud Security</span>
-          <span class="blog-date">Feb 2025</span>
+          <span class="blog-date">2026-02</span>
+          <span class="blog-tag cloud">Cloud</span>
         </div>
-        <div class="blog-title">Scaling IAM Across 120 AWS Accounts</div>
-        <div class="blog-excerpt">Lessons learned designing a least-privilege IAM architecture across a large multi-account AWS organization.</div>
-      </div>
-    </div>
-    <div class="blog-card">
-      <div class="blog-card-img" style="background:linear-gradient(135deg,#eefef3,#d8fee4)">🔍</div>
-      <div class="blog-card-body">
+        <h3>Managing security across 120+ AWS accounts: lessons from the trenches</h3>
+        <p>Practical approaches to cross-account security architecture, IAM governance, and maintaining visibility across a large-scale AWS environment.</p>
+        <span class="read-more">Read more &rarr;</span>
+      </a>
+
+      <a class="blog-card reveal" href="#">
         <div class="blog-meta">
-          <span class="blog-cat">Nuclei</span>
-          <span class="blog-date">Jan 2025</span>
+          <span class="blog-date">2026-01</span>
+          <span class="blog-tag ops">SecOps</span>
         </div>
-        <div class="blog-title">Writing Reliable Nuclei Templates for Enterprise Scanning</div>
-        <div class="blog-excerpt">Best practices for building low-noise, high-fidelity Nuclei templates at scale in production environments.</div>
-      </div>
+        <h3>Closing the agent gap: why your EDR coverage is probably worse than you think</h3>
+        <p>How to systematically identify and remediate agent coverage gaps across CrowdStrike and Rapid7 in mixed OS environments with legacy servers.</p>
+        <span class="read-more">Read more &rarr;</span>
+      </a>
+
+      <a class="blog-card reveal" href="#">
+        <div class="blog-meta">
+          <span class="blog-date">2025-12</span>
+          <span class="blog-tag threat">Threat intel</span>
+        </div>
+        <h3>Investigating suspicious audit emails: a real-world phishing case study</h3>
+        <p>Walkthrough of investigating a suspicious Deloitte audit confirmation email, from initial triage through IOC enrichment and MITRE ATT&CK mapping.</p>
+        <span class="read-more">Read more &rarr;</span>
+      </a>
+
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
 <!-- CONTACT -->
-<section id="contact">
-  <div class="contact-left">
-    <div class="section-label">Contact</div>
-    <h2>Let's talk<br>security.</h2>
-    <p>Whether it's a consulting inquiry, template collaboration, or just security shop talk — reach out via any channel below.</p>
-    <div class="social-links">
-      <a href="https://linkedin.com" class="social-link">
-        <div class="social-icon" style="background:#e8f0fe">💼</div>
-        <div><div class="social-name">LinkedIn</div><div class="social-handle">https://www.linkedin.com/in/harikrishnan-d/</div></div>
-      </a>
-      <a href="https://github.com" class="social-link">
-        <div class="social-icon" style="background:#f0f0f0">🐙</div>
-        <div><div class="social-name">GitHub</div><div class="social-handle">https://github.com/harikkrish/</div></div>
-      </a>
-      <a href="https://twitter.com" class="social-link">
-        <div class="social-icon" style="background:#e8f5fe">🐦</div>
-        <div><div class="social-name">Twitter / X</div><div class="social-handle">@hari_infosec</div></div>
-      </a>
+<section class="section bg-alt" id="contact">
+  <div class="section-inner">
+    <div class="section-label">Get in touch</div>
+    <div class="section-title">Let's work together</div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <h3>Open to consulting, advisory, and collaboration</h3>
+        <p>Whether you need help with cloud security architecture, security operations optimization, tool evaluation, or incident response — I'd love to hear from you.</p>
+        <div class="contact-channels">
+          <a href="mailto:hari@breachfocus.com" class="contact-ch">
+            <div class="ch-icon" style="background: var(--accent-light); color: var(--accent);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="ch-label">Email</div>
+              <div class="ch-value">hari@breachfocus.com</div>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/" class="contact-ch">
+            <div class="ch-icon" style="background: #E8F4FE; color: #0077B5;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </div>
+            <div>
+              <div class="ch-label">LinkedIn</div>
+              <div class="ch-value">Connect with me</div>
+            </div>
+          </a>
+          <a href="#" class="contact-ch">
+            <div class="ch-icon" style="background: #F1EFE8; color: var(--text);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="ch-label">Based in</div>
+              <div class="ch-value">Budapest, Hungary</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@company.com">
+        </div>
+        <div class="form-group">
+          <label for="type">I'm interested in</label>
+          <select id="type">
+            <option value="">Select a topic</option>
+            <option value="consulting">Security consulting</option>
+            <option value="architecture">Cloud architecture review</option>
+            <option value="assessment">Security assessment</option>
+            <option value="speaking">Speaking / Advisory</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="Tell me about your project or challenge..."></textarea>
+        </div>
+        <button class="form-submit" type="button">Send message</button>
+      </div>
     </div>
-  </div>
-  <div class="contact-form">
-    <div class="form-group">
-      <label>Name</label>
-      <input class="form-control" type="text" placeholder="Your name">
-    </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input class="form-control" type="email" placeholder="you@company.com">
-    </div>
-    <div class="form-group">
-      <label>Subject</label>
-      <select class="form-control">
-        <option>General inquiry</option>
-        <option>Security consulting</option>
-        <option>Template collaboration</option>
-        <option>Speaking / writing</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Message</label>
-      <textarea class="form-control" placeholder="Tell me about your project or question..."></textarea>
-    </div>
-    <button class="btn btn-primary" style="width:100%" onclick="sendContact()">Send Message</button>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <div class="footer-copy"><strong>Hari</strong> · Security Engineer · Budapest 🇭🇺 · 2025</div>
-  <div class="footer-stack">
-    <span class="pill">Nuclei</span>
-    <span class="pill">AWS</span>
-    <span class="pill">CrowdStrike</span>
-    <span class="pill">Rapid7</span>
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-copy">&copy; 2026 BreachFocus. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#blog">Insights</a>
+      <a href="#contact">Contact</a>
+    </div>
   </div>
 </footer>
 
-<div class="toast" id="toast"></div>
-
 <script>
-// ── TAB SWITCHER ──
-function switchTab(id) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    const panels = ['cve-scan','template-builder','template-library','scan-runner'];
-    b.classList.toggle('active', panels[i] === id);
+// Scroll-triggered reveals
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => observer.observe(el));
+
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
   });
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  if (id === 'template-builder') generateYaml();
-  if (id === 'template-library') renderLib();
-}
+});
 
-// ── TOAST ──
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ── CVE SCANNER ──
-const cveDetails = {
-  'CVE-2021-44228': { desc: 'Apache Log4j2 JNDI injection — arbitrary code execution via crafted log messages.', sev:'critical', protocol:'http', affected:'Log4j 2.0-beta9 to 2.14.1' },
-  'CVE-2022-26134': { desc: 'Atlassian Confluence Server/DC OGNL injection allowing unauthenticated RCE.', sev:'critical', protocol:'http', affected:'Confluence < 7.18.1' },
-  'CVE-2023-34362': { desc: 'MOVEit Transfer SQL injection enabling unauthenticated database access.', sev:'critical', protocol:'http', affected:'MOVEit Transfer < 2023.0.1' },
-  'CVE-2021-26855': { desc: 'Microsoft Exchange Server SSRF vulnerability allowing authentication bypass (ProxyLogon).', sev:'critical', protocol:'https', affected:'Exchange 2013-2019' },
-  'CVE-2022-22965': { desc: 'Spring Framework RCE via DataBinder (Spring4Shell) on JDK 9+.', sev:'high', protocol:'http', affected:'Spring Framework < 5.3.18' },
-  'CVE-2021-21985': { desc: 'VMware vCenter Server RCE via Virtual SAN Health Check plugin.', sev:'high', protocol:'https', affected:'vCenter Server 6.5-7.0' },
-  'CVE-2022-47966': { desc: 'ManageEngine multiple products pre-auth RCE via SAML.', sev:'high', protocol:'https', affected:'ManageEngine 100+ products' },
-  'CVE-2023-23397': { desc: 'Microsoft Outlook NTLM hash leak via specially crafted meeting requests.', sev:'high', protocol:'smb', affected:'Outlook 2013-2021' },
-  'CVE-2022-1388': { desc: 'F5 BIG-IP iControl REST authentication bypass allowing arbitrary command execution.', sev:'high', protocol:'https', affected:'BIG-IP 13.1.x-16.1.x' },
-  'CVE-2021-40444': { desc: 'Microsoft MSHTML remote code execution via crafted ActiveX control.', sev:'medium', protocol:'http', affected:'Windows all supported' },
-};
-
-function runCveScan() {
-  const target = document.getElementById('scan-target').value.trim();
-  const cve = document.getElementById('cve-select').value;
-  const out = document.getElementById('scan-result');
-  const badge = document.getElementById('scan-severity-badge');
-  if (!target) { showToast('Enter a target URL first'); return; }
-  if (!cve) { showToast('Select a CVE template'); return; }
-  const info = cveDetails[cve];
-  const sevClasses = { critical:'sev-critical', high:'sev-high', medium:'sev-medium', low:'sev-low' };
-  badge.className = 'severity-badge ' + sevClasses[info.sev];
-  badge.textContent = info.sev; badge.style.display = '';
-
-  const lines = [
-    `<span style="color:var(--accent-2)">nuclei</span> -u ${target} -t cves/${cve}.yaml`,
-    ``,
-    `[INF] Loading template: <span style="color:#7eb8f7">${cve}</span>`,
-    `[INF] Severity: <span class="severity-badge ${sevClasses[info.sev]}">${info.sev.toUpperCase()}</span>`,
-    `[INF] ${info.desc}`,
-    `[INF] Affected: ${info.affected}`,
-    `[INF] Protocol: ${info.protocol.toUpperCase()}`,
-    ``,
-    `[INF] Sending request to ${target}...`,
-  ];
-
-  out.innerHTML = lines.map(l => `<div class="result-line">${l}</div>`).join('');
-
-  let step = 0;
-  const steps = [
-    () => addLine(out, `[INF] Resolving host...`, 'info'),
-    () => addLine(out, `[INF] Establishing ${info.protocol.toUpperCase()} connection...`, 'info'),
-    () => addLine(out, `[INF] Sending payload probe...`, 'info'),
-    () => addLine(out, `[INF] Analyzing response headers...`, 'info'),
-    () => {
-      const vulnerable = Math.random() > 0.6;
-      if (vulnerable) {
-        addLine(out, `[CRITICAL] ${cve} — MATCH FOUND at ${target}`, 'hit');
-        addLine(out, `[CRITICAL] Target appears vulnerable — immediate remediation required.`, 'hit');
-        showToast(`⚠ ${cve} — potential match found`);
-      } else {
-        addLine(out, `[INF] No match detected for ${cve} at ${target}`, 'ok');
-        addLine(out, `[INF] Target does not appear vulnerable to this template.`, 'ok');
-        showToast(`✓ Scan complete — no match`);
-      }
-      addLine(out, `[INF] Scan complete.`, 'info');
-    }
-  ];
-
-  const iv = setInterval(() => {
-    if (step < steps.length) { steps[step](); step++; } else clearInterval(iv);
-  }, 600);
-}
-
-function addLine(container, text, type) {
-  const d = document.createElement('div');
-  const colors = { hit:'var(--accent)', ok:'#2ecc71', info:'var(--accent-2)', muted:'var(--ink-muted)' };
-  d.className = 'result-line';
-  d.style.color = colors[type] || 'var(--ink-soft)';
-  d.style.fontFamily = "'DM Mono', monospace";
-  d.style.fontSize = '12px';
-  d.style.lineHeight = '1.8';
-  d.innerHTML = text;
-  container.appendChild(d);
-  container.scrollTop = container.scrollHeight;
-}
-
-// ── TEMPLATE BUILDER ──
-function generateYaml() {
-  const id = document.getElementById('tmpl-id').value || 'my-template-001';
-  const name = document.getElementById('tmpl-name').value || 'Template Name';
-  const author = document.getElementById('tmpl-author').value || 'hari';
-  const tags = document.getElementById('tmpl-tags').value || 'cve,custom';
-  const path = document.getElementById('tmpl-path').value || '/';
-  const method = document.getElementById('tmpl-method').value || 'GET';
-  const matcher = document.getElementById('tmpl-matcher').value || 'vulnerable';
-  const sev = document.getElementById('tmpl-sev').value || 'medium';
-  const cveRef = document.getElementById('tmpl-cve').value;
-
-  const yaml = `id: ${id}
-
-info:
-  name: ${name}
-  author: ${author}
-  severity: ${sev}
-  tags: ${tags}${cveRef ? `
-  reference:
-    - https://nvd.nist.gov/vuln/detail/${cveRef}
-    - https://cve.mitre.org/cgi-bin/cvename.cgi?name=${cveRef}` : ''}
-  metadata:
-    verified: true
-    max-request: 1
-
-http:
-  - method: ${method}
-    path:
-      - "{{BaseURL}}${path}"
-
-    headers:
-      User-Agent: Mozilla/5.0 (nuclei-scanner)
-      Accept: "*/*"
-
-    matchers-condition: and
-    matchers:
-      - type: word
-        words:
-          - "${matcher}"
-        condition: and
-
-      - type: status
-        status:
-          - 200
-`;
-  document.getElementById('yaml-output').value = yaml;
-}
-
-function copyYaml() {
-  const yaml = document.getElementById('yaml-output').value;
-  if (!yaml) { showToast('Generate a template first'); return; }
-  navigator.clipboard.writeText(yaml).then(() => showToast('YAML copied to clipboard ✓'));
-}
-
-// ── TEMPLATE LIBRARY ──
-const templates = [
-  { id:'CVE-2021-44228', name:'Log4Shell RCE', desc:'JNDI injection via Log4j2 log messages leading to arbitrary code execution.', tags:['rce','critical'], cat:'rce' },
-  { id:'CVE-2022-26134', name:'Confluence OGNL Injection', desc:'Unauthenticated RCE via OGNL injection in Atlassian Confluence.', tags:['rce','critical'], cat:'rce' },
-  { id:'CVE-2023-34362', name:'MOVEit SQLi', desc:'SQL injection in MOVEit Transfer enabling unauthenticated data access.', tags:['sqli','critical'], cat:'sqli' },
-  { id:'CVE-2021-26855', name:'Exchange ProxyLogon SSRF', desc:'SSRF in Microsoft Exchange enabling auth bypass and mailbox access.', tags:['ssrf','critical'], cat:'ssrf' },
-  { id:'CVE-2022-22965', name:'Spring4Shell RCE', desc:'Spring Framework DataBinder RCE on JDK 9+ environments.', tags:['rce','high'], cat:'rce' },
-  { id:'CVE-2022-1388', name:'BIG-IP Auth Bypass', desc:'F5 BIG-IP iControl REST unauthenticated command execution.', tags:['auth','critical'], cat:'auth' },
-  { id:'CVE-2023-23397', name:'Outlook NTLM Leak', desc:'Microsoft Outlook leaks NTLM credentials via crafted calendar invite.', tags:['info','high'], cat:'info' },
-  { id:'CVE-2021-40444', name:'MSHTML ActiveX RCE', desc:'Office ActiveX control MSHTML code execution via malicious document.', tags:['rce','high'], cat:'rce' },
-  { id:'CVE-2022-47966', name:'ManageEngine Pre-Auth RCE', desc:'SAML-based authentication bypass enabling code execution.', tags:['auth','rce'], cat:'auth' },
-  { id:'CVE-2021-21985', name:'vCenter RCE', desc:'VMware vCenter VSAN Health Check plugin remote code execution.', tags:['rce','high'], cat:'rce' },
-  { id:'GENERIC-XSS-001', name:'Reflected XSS (Generic)', desc:'Common reflected XSS detection patterns across query parameters.', tags:['xss','medium'], cat:'xss' },
-  { id:'GENERIC-SQLI-001', name:'Error-Based SQLi', desc:'MySQL/MSSQL error-based SQL injection detection template.', tags:['sqli','high'], cat:'sqli' },
-];
-
-let activeFilter = 'all';
-function renderLib() {
-  const grid = document.getElementById('lib-grid');
-  const sevColors = { critical:'sev-critical', high:'sev-high', medium:'sev-medium', low:'sev-low', info:'sev-low' };
-  const filtered = activeFilter === 'all' ? templates : templates.filter(t => t.cat === activeFilter);
-  grid.innerHTML = filtered.map(t => `
-    <div class="lib-card" onclick="loadTemplate('${t.id}')">
-      <div class="lib-card-top">
-        <span class="lib-card-id">${t.id}</span>
-        <span class="severity-badge ${sevColors[t.tags[1]] || 'sev-medium'}">${t.tags[1] || 'medium'}</span>
-      </div>
-      <div class="lib-card-name">${t.name}</div>
-      <div class="lib-card-desc">${t.desc}</div>
-      <div class="lib-card-footer">
-        <div class="lib-card-tags">${t.tags.map(tag=>`<span class="lib-tag">${tag}</span>`).join('')}</div>
-        <span style="font-size:11px;color:var(--accent-2);font-family:'DM Mono',monospace">Use →</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function filterLib(btn, cat) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  activeFilter = cat;
-  renderLib();
-}
-
-function loadTemplate(id) {
-  switchTab('template-builder');
-  document.getElementById('tmpl-id').value = id.toLowerCase().replace(/-/g,'_');
-  document.getElementById('tmpl-cve').value = id.startsWith('CVE') ? id : '';
-  const t = templates.find(x => x.id === id);
-  if (t) {
-    document.getElementById('tmpl-name').value = t.name;
-    document.getElementById('tmpl-sev').value = t.tags[1] || 'medium';
-    document.getElementById('tmpl-tags').value = t.tags.join(',');
+// Simple form handler (static placeholder)
+document.querySelector('.form-submit').addEventListener('click', function() {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const msg = document.getElementById('message').value;
+  if (!name || !email || !msg) {
+    this.textContent = 'Please fill all fields';
+    this.style.background = '#DE350B';
+    setTimeout(() => { this.textContent = 'Send message'; this.style.background = ''; }, 2000);
+    return;
   }
-  generateYaml();
-  showToast(`Loaded template: ${id}`);
-}
-
-// ── SCAN RUNNER ──
-function clearTerminal() {
-  const term = document.getElementById('runner-terminal');
-  term.innerHTML = `<div class="terminal-bar">
-    <div class="terminal-dot t-red"></div>
-    <div class="terminal-dot t-yellow"></div>
-    <div class="terminal-dot t-green"></div>
-    <span class="terminal-title">nuclei — scan terminal</span>
-  </div>
-  <div class="t-line t-muted">Terminal cleared.</div>`;
-  document.getElementById('runner-progress').style.width = '0%';
-  document.getElementById('runner-status').textContent = 'Ready';
-}
-
-function runFullScan() {
-  const target = document.getElementById('runner-target').value.trim();
-  if (!target) { showToast('Enter a target URL'); return; }
-  const term = document.getElementById('runner-terminal');
-  const prog = document.getElementById('runner-progress');
-  const status = document.getElementById('runner-status');
-
-  clearTerminal();
-  const tmpl = document.getElementById('runner-templates').value;
-  const conc = document.getElementById('runner-conc').value;
-
-  const scanLines = [
-    { text: `$ nuclei -u ${target} -t cves/ -c ${conc}`, cls:'t-cmd', delay:200 },
-    { text: `[INF] Nuclei v3.1.0 — loaded`, cls:'t-info', delay:500 },
-    { text: `[INF] Templates: ${tmpl}`, cls:'t-info', delay:800 },
-    { text: `[INF] Concurrency: ${conc} | Rate: 150 req/s`, cls:'t-dim', delay:1100 },
-    { text: `[INF] Resolving target: ${target}`, cls:'t-info', delay:1500 },
-    { text: `[INF] Starting scan — 247 templates loaded`, cls:'t-info', delay:2000 },
-    { text: `[INF] Testing http/vulnerabilities/cve/...`, cls:'t-dim', delay:2600 },
-    { text: `[INF] Testing network/exposure/...`, cls:'t-dim', delay:3200 },
-    { text: `[WRN] CVE-2021-33026: Possible ColdFusion exposure (info)`, cls:'t-warn', delay:3800 },
-    { text: `[INF] Testing http/misconfiguration/...`, cls:'t-dim', delay:4400 },
-    { text: `[WRN] Detected open directory listing`, cls:'t-warn', delay:4900 },
-    { text: `[INF] Testing default credentials...`, cls:'t-dim', delay:5400 },
-    { text: `[INF] Testing http/exposures/...`, cls:'t-dim', delay:5900 },
-    { text: `[INF] 247/247 templates processed`, cls:'t-info', delay:6600 },
-    { text: ``, cls:'t-dim', delay:6800 },
-    { text: `[INF] ─────── Scan Results ───────`, cls:'t-info', delay:7000 },
-    { text: `[INF] Total requests: 1,847`, cls:'t-info', delay:7100 },
-    { text: `[INF] Findings: 2 (1 medium, 1 info)`, cls:'t-warn', delay:7200 },
-    { text: `[INF] Scan duration: 6.8s`, cls:'t-dim', delay:7300 },
-    { text: `[INF] Report saved to results.json`, cls:'t-ok', delay:7500 },
-  ];
-
-  scanLines.forEach(({ text, cls, delay }) => {
-    setTimeout(() => {
-      const d = document.createElement('div');
-      d.className = `t-line ${cls}`;
-      d.textContent = text;
-      term.appendChild(d);
-      term.scrollTop = term.scrollHeight;
-      const pct = Math.min(100, (delay / 7500) * 100);
-      prog.style.width = pct + '%';
-      status.textContent = delay >= 7500 ? 'Scan complete — 2 findings' : 'Scanning...';
-    }, delay);
-  });
-
-  setTimeout(() => showToast('Scan complete — 2 findings'), 7600);
-}
-
-// ── CONTACT ──
-function sendContact() {
-  showToast('Message sent — I\'ll get back to you soon ✓');
-}
-
-// ── INIT ──
-generateYaml();
-renderLib();
+  this.textContent = 'Message sent!';
+  this.style.background = '#00875A';
+  setTimeout(() => { this.textContent = 'Send message'; this.style.background = ''; }, 3000);
+});
 </script>
 </body>
 </html>
