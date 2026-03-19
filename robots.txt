@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://breachfocus.github.io/sitemap.xml
+Sitemap: https://breachfocus.com/sitemap.xml
