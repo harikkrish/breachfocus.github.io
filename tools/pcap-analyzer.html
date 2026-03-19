@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCAP Analyzer — BreachFocus Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF8;--bg-card:#fff;--bg-dark:#0C1117;--text:#1A1D23;--text-s:#5A5F6B;--text-m:#9096A2;--accent:#0066FF;--al:#E8F0FF;--ad:#0047B3;--green:#00875A;--gl:#E3FCEF;--red:#DE350B;--rl:#FFEBE6;--amber:#FF991F;--aml:#FFF7E6;--border:rgba(0,0,0,.08);--bs:rgba(0,0,0,.15);--r:12px;--rs:8px;--rx:6px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;--dsp:'Fraunces',Georgia,serif;--mw:1200px;--nh:64px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nh);background:rgba(250,250,248,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--mw);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--mono);font-weight:700;font-size:12px}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-s);text-decoration:none;padding:7px 14px;border-radius:var(--rx);border:1px solid var(--border);transition:all .2s}
+.nav-back:hover{color:var(--text);border-color:var(--bs)}
+.hero{padding:calc(var(--nh) + 48px) 2rem 36px;max-width:var(--mw);margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:#F0E6FF;color:#7C3AED;font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:var(--dsp);font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.hero p{font-size:16px;color:var(--text-s);max-width:640px}
+.body{max-width:var(--mw);margin:0 auto;padding:0 2rem 80px}
+
+/* Upload zone */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;background:var(--bg-card)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--al)}
+.upload-zone svg{margin-bottom:12px;color:var(--text-m)}
+.upload-zone h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.upload-zone p{font-size:14px;color:var(--text-s)}
+.upload-zone .hint{font-size:12px;color:var(--text-m);margin-top:8px;font-family:var(--mono)}
+#fileInput{display:none}
+
+.demo-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s;margin-top:12px}
+.demo-btn:hover{background:var(--ad)}
+
+/* Progress */
+.progress-wrap{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);padding:24px;margin-bottom:20px;display:none}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.progress-label{font-size:13px;color:var(--text-s);font-family:var(--mono)}
+
+/* Summary strip */
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg-card);border-radius:var(--rs);border:1px solid var(--border);padding:16px;text-align:center}
+.stat-card .n{font-size:24px;font-weight:700;font-family:var(--mono)}
+.stat-card .l{font-size:11px;color:var(--text-m);margin-top:3px}
+
+/* Results grid */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
+.panel.full{grid-column:1/-1}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ps{font-size:12px;color:var(--text-m);font-family:var(--mono)}
+.pb{padding:0}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-m);background:#F7F7F5;border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#FAFAF8}
+.mono{font-family:var(--mono);font-size:12px}
+
+/* Finding badges */
+.sev{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;text-transform:uppercase}
+.sev.critical{background:var(--rl);color:var(--red)}
+.sev.high{background:var(--aml);color:var(--amber)}
+.sev.medium{background:var(--al);color:var(--accent)}
+.sev.info{background:var(--gl);color:var(--green)}
+
+/* Protocol chart */
+.proto-bars{padding:16px 18px}
+.proto-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.proto-label{font-size:12px;font-family:var(--mono);width:60px;flex-shrink:0}
+.proto-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.proto-fill{height:100%;border-radius:4px;transition:width .8s ease}
+.proto-pct{font-size:12px;font-family:var(--mono);color:var(--text-m);width:36px;text-align:right}
+
+/* Top talkers */
+.talker{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.talker:last-child{border-bottom:none}
+.talker-ip{font-family:var(--mono)}
+.talker-bar-wrap{flex:1;margin:0 12px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.talker-bar{height:100%;background:var(--accent);border-radius:3px}
+.talker-count{font-family:var(--mono);font-size:12px;color:var(--text-m)}
+
+.empty{text-align:center;padding:60px 20px;color:var(--text-m)}
+.empty svg{opacity:.3;margin-bottom:12px}
+.empty p{font-size:14px}
+
+/* Findings list */
+.finding{padding:14px 16px;border-radius:var(--rs);margin-bottom:10px;border-left:3px solid transparent}
+.finding.critical{background:var(--rl);border-color:var(--red)}
+.finding.high{background:var(--aml);border-color:var(--amber)}
+.finding.medium{background:var(--al);border-color:var(--accent)}
+.finding.info{background:var(--gl);border-color:var(--green)}
+.fh{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ft{font-size:14px;font-weight:600}
+.fd{font-size:13px;color:var(--text-s)}
+
+@media(max-width:900px){.results-grid{grid-template-columns:1fr}.hero,.body{padding-left:1rem;padding-right:1rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo"><div class="logo-icon">BF</div>BreachFocus</a>
+  <a href="index.html" class="nav-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>All tools</a>
+</div></nav>
+
+<div class="hero">
+  <div class="badge">🌐 Network &amp; Traffic</div>
+  <h1>PCAP Analyzer</h1>
+  <p>Upload a .pcap or .pcapng file to analyze packet captures in your browser. Detects suspicious traffic patterns, protocol distribution, top talkers, DGA-like domains, and cleartext credentials — all client-side, nothing uploaded.</p>
+</div>
+
+<div class="body">
+  <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <h3>Drop .pcap / .pcapng file here</h3>
+    <p>or click to browse — max 50MB</p>
+    <div class="hint">.pcap · .pcapng · .cap supported</div>
+    <input type="file" id="fileInput" accept=".pcap,.pcapng,.cap">
+    <br>
+    <button class="demo-btn" onclick="event.stopPropagation();loadDemo()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Run demo analysis
+    </button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label" id="progressLabel">Parsing packets…</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div id="results">
+    <div class="empty">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <p>Upload a PCAP file or run the demo to see analysis.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// PCAP magic bytes
+const PCAP_MAGIC = [0xd4,0xc3,0xb2,0xa1,0xa1,0xb2,0xc3,0xd4];
+const PCAPNG_MAGIC = [0x0a,0x0d,0x0d,0x0a];
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f) processFile(f); });
+fileInput.addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); });
+
+function processFile(file) {
+  if(file.size > 52428800) { alert('File too large (max 50MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => parsePCAP(e.target.result, file.name, file.size);
+  reader.readAsArrayBuffer(file);
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+
+function parsePCAP(buf, filename, filesize) {
+  setProgress(10, 'Reading file header…');
+  const view = new DataView(buf);
+  const bytes = new Uint8Array(buf);
+
+  // Detect format
+  let isNG = false, littleEndian = true;
+  const magic = view.getUint32(0, true);
+  if(magic === 0xa1b2c3d4) { littleEndian = true; }
+  else if(magic === 0xd4c3b2a1) { littleEndian = false; }
+  else if(bytes[0]===0x0a && bytes[1]===0x0d && bytes[2]===0x0d && bytes[3]===0x0a) { isNG = true; }
+  else { showError('Not a valid PCAP/PCAPNG file. Magic bytes not recognized.'); return; }
+
+  setProgress(20, 'Parsing packets…');
+
+  const packets = isNG ? parsePCAPNG(buf) : parsePCAPClassic(buf, littleEndian);
+
+  setProgress(60, 'Analyzing protocols…');
+  const analysis = analyze(packets, filename, filesize);
+
+  setProgress(90, 'Generating report…');
+  setTimeout(() => {
+    document.getElementById('progressWrap').style.display = 'none';
+    renderResults(analysis);
+  }, 200);
+}
+
+function parsePCAPClassic(buf, le) {
+  const view = new DataView(buf);
+  const packets = [];
+  let offset = 24; // skip global header
+  while(offset + 16 <= buf.byteLength) {
+    try {
+      const tsSec = view.getUint32(offset, le);
+      const capLen = view.getUint32(offset + 8, le);
+      const origLen = view.getUint32(offset + 12, le);
+      if(capLen > 65536 || offset + 16 + capLen > buf.byteLength) break;
+      const data = new Uint8Array(buf, offset + 16, Math.min(capLen, buf.byteLength - offset - 16));
+      packets.push({ ts: tsSec, len: origLen, capLen, data });
+      offset += 16 + capLen;
+      if(packets.length > 50000) break; // safety cap
+    } catch(e) { break; }
+  }
+  return packets;
+}
+
+function parsePCAPNG(buf) {
+  const view = new DataView(buf);
+  const packets = [];
+  let offset = 0;
+  while(offset + 12 <= buf.byteLength) {
+    try {
+      const blockType = view.getUint32(offset, true);
+      const blockLen = view.getUint32(offset + 4, true);
+      if(blockLen < 12 || offset + blockLen > buf.byteLength) break;
+      if(blockType === 6) { // EPB - Enhanced Packet Block
+        const capLen = view.getUint32(offset + 20, true);
+        const origLen = view.getUint32(offset + 24, true);
+        const dataStart = offset + 28;
+        if(dataStart + capLen <= buf.byteLength) {
+          const data = new Uint8Array(buf, dataStart, Math.min(capLen, 1500));
+          packets.push({ ts: 0, len: origLen, capLen, data });
+        }
+      } else if(blockType === 3) { // SPB - Simple Packet Block
+        const origLen = view.getUint32(offset + 8, true);
+        const data = new Uint8Array(buf, offset + 12, Math.min(origLen, 1500));
+        packets.push({ ts: 0, len: origLen, capLen: origLen, data });
+      }
+      offset += blockLen;
+      if(packets.length > 50000) break;
+    } catch(e) { break; }
+  }
+  return packets;
+}
+
+// Parse Ethernet frame → extract IPs, ports, protocol
+function parseEth(data) {
+  if(data.length < 14) return null;
+  const etherType = (data[12] << 8) | data[13];
+  let ipOffset = 14;
+  // VLAN tag
+  if(etherType === 0x8100) { ipOffset = 18; }
+  if(data.length < ipOffset + 20) return null;
+
+  // IPv4
+  if(data[ipOffset - 2] === 0x08 && data[ipOffset - 1] === 0x00 || etherType === 0x0800) {
+    return parseIPv4(data, ipOffset);
+  }
+  // IPv6
+  if(etherType === 0x86DD) return parseIPv6(data, ipOffset);
+  // ARP
+  if(etherType === 0x0806) return { proto:'ARP', src:'', dst:'', sport:0, dport:0, payload:null };
+  return null;
+}
+
+function ip4str(d, off) { return `${d[off]}.${d[off+1]}.${d[off+2]}.${d[off+3]}`; }
+
+function parseIPv4(data, off) {
+  if(data.length < off + 20) return null;
+  const ihl = (data[off] & 0x0f) * 4;
+  const proto = data[off + 9];
+  const src = ip4str(data, off + 12);
+  const dst = ip4str(data, off + 16);
+  const tOff = off + ihl;
+  let sport = 0, dport = 0, protoName = 'IPv4', payload = null;
+
+  if(proto === 6 && data.length >= tOff + 4) { // TCP
+    sport = (data[tOff] << 8) | data[tOff+1];
+    dport = (data[tOff+2] << 8) | data[tOff+3];
+    protoName = 'TCP';
+    const dataOff = ((data[tOff+12] >> 4) * 4);
+    if(data.length > tOff + dataOff) payload = data.slice(tOff + dataOff);
+  } else if(proto === 17 && data.length >= tOff + 4) { // UDP
+    sport = (data[tOff] << 8) | data[tOff+1];
+    dport = (data[tOff+2] << 8) | data[tOff+3];
+    protoName = 'UDP';
+    if(data.length > tOff + 8) payload = data.slice(tOff + 8);
+  } else if(proto === 1) { protoName = 'ICMP'; }
+  else if(proto === 89) { protoName = 'OSPF'; }
+
+  return { proto:protoName, src, dst, sport, dport, payload };
+}
+
+function parseIPv6(data, off) {
+  if(data.length < off + 40) return null;
+  const next = data[off + 6];
+  const protoMap = {6:'TCP',17:'UDP',58:'ICMPv6',89:'OSPF'};
+  return { proto: protoMap[next]||'IPv6', src:'IPv6', dst:'IPv6', sport:0, dport:0, payload:null };
+}
+
+function analyze(packets, filename, filesize) {
+  const protocols = {}, ipCount = {}, conversations = {}, ports = {};
+  const findings = [], dnsQueries = [], httpHosts = [], cleartext = [];
+  let totalBytes = 0, tcpCount = 0, udpCount = 0, icmpCount = 0;
+
+  packets.forEach((pkt, i) => {
+    totalBytes += pkt.len;
+    const parsed = parseEth(pkt.data);
+    if(!parsed) { protocols['Other'] = (protocols['Other']||0)+1; return; }
+
+    protocols[parsed.proto] = (protocols[parsed.proto]||0)+1;
+    if(parsed.src) { ipCount[parsed.src] = (ipCount[parsed.src]||0)+1; }
+    if(parsed.dst) { ipCount[parsed.dst] = (ipCount[parsed.dst]||0)+1; }
+    if(parsed.dport) { ports[parsed.dport] = (ports[parsed.dport]||0)+1; }
+    if(parsed.proto==='TCP') tcpCount++;
+    if(parsed.proto==='UDP') udpCount++;
+    if(parsed.proto==='ICMP') icmpCount++;
+
+    if(parsed.payload) {
+      const pay = parsed.payload;
+      // DNS (UDP 53)
+      if(parsed.proto==='UDP' && (parsed.dport===53||parsed.sport===53) && pay.length > 12) {
+        const qname = parseDNSName(pay, 12);
+        if(qname) { dnsQueries.push(qname); checkDGA(qname, findings); }
+      }
+      // HTTP
+      if(parsed.proto==='TCP' && (parsed.dport===80||parsed.sport===80) && pay.length > 4) {
+        const txt = bytes2ascii(pay, 200);
+        const hostMatch = txt.match(/Host: ([^\r\n]+)/i);
+        if(hostMatch) httpHosts.push(hostMatch[1]);
+        // Cleartext auth
+        if(/Authorization: Basic/i.test(txt)) cleartext.push({ type:'HTTP Basic Auth', src:parsed.src+':'+parsed.sport, dst:parsed.dst+':'+parsed.dport });
+        if(/PASS /i.test(txt) && parsed.dport===21) cleartext.push({ type:'FTP Password', src:parsed.src, dst:parsed.dst });
+        if(/USER /i.test(txt) && parsed.dport===21) cleartext.push({ type:'FTP Username', src:parsed.src, dst:parsed.dst });
+      }
+      // Telnet
+      if(parsed.proto==='TCP' && parsed.dport===23) {
+        findings.push({ sev:'critical', title:'Telnet traffic detected', desc:`${parsed.src} → ${parsed.dst} — Telnet transmits credentials in cleartext. Use SSH instead.` });
+      }
+    }
+
+    // Large ICMP
+    if(parsed.proto==='ICMP' && pkt.len > 1000) {
+      findings.push({ sev:'medium', title:'Large ICMP packet (possible tunneling)', desc:`Packet size ${pkt.len} bytes — may indicate ICMP tunneling or data exfiltration.` });
+    }
+  });
+
+  // Port scan detection
+  const uniquePorts = Object.keys(ports).length;
+  if(uniquePorts > 20 && tcpCount > 50) {
+    findings.push({ sev:'high', title:`Port scan detected (${uniquePorts} unique ports)`, desc:'High number of distinct destination ports accessed — likely a network scan.' });
+  }
+
+  // Cleartext findings
+  cleartext.forEach(c => findings.push({ sev:'critical', title:`Cleartext credentials: ${c.type}`, desc:`${c.src} → ${c.dst}` }));
+
+  // Top IPs
+  const topIPs = Object.entries(ipCount).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const topPorts = Object.entries(ports).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const uniqueDNS = [...new Set(dnsQueries)].slice(0,30);
+  const uniqueHTTP = [...new Set(httpHosts)].slice(0,20);
+
+  // Dedup findings
+  const seen = new Set();
+  const dedupFindings = findings.filter(f => { const k=f.title+f.desc; if(seen.has(k)) return false; seen.add(k); return true; });
+
+  return { filename, filesize, totalPackets:packets.length, totalBytes, protocols, topIPs, topPorts, tcpCount, udpCount, icmpCount, findings:dedupFindings, dnsQueries:uniqueDNS, httpHosts:uniqueHTTP };
+}
+
+function parseDNSName(data, offset) {
+  let name = '', pos = offset, jumps = 0;
+  while(pos < data.length && jumps < 10) {
+    const len = data[pos];
+    if(len === 0) break;
+    if((len & 0xC0) === 0xC0) { pos += 2; jumps++; break; }
+    if(name) name += '.';
+    for(let i=1; i<=len && pos+i < data.length; i++) name += String.fromCharCode(data[pos+i]);
+    pos += len + 1;
+  }
+  return name || null;
+}
+
+function bytes2ascii(data, max) {
+  let s = '';
+  for(let i=0; i<Math.min(data.length, max); i++) {
+    const c = data[i];
+    s += (c >= 32 && c < 127) ? String.fromCharCode(c) : '.';
+  }
+  return s;
+}
+
+function checkDGA(domain, findings) {
+  // Simple DGA heuristics: high consonant ratio, long labels, high entropy
+  const parts = domain.split('.');
+  const label = parts[0] || '';
+  if(label.length > 15) {
+    const vowels = (label.match(/[aeiou]/gi)||[]).length;
+    const ratio = vowels / label.length;
+    if(ratio < 0.2 && label.length > 12) {
+      findings.push({ sev:'high', title:'Possible DGA domain', desc:`${domain} — low vowel ratio (${(ratio*100).toFixed(0)}%) may indicate domain generation algorithm` });
+    }
+  }
+}
+
+function fmt(n) {
+  if(n > 1048576) return (n/1048576).toFixed(1)+' MB';
+  if(n > 1024) return (n/1024).toFixed(1)+' KB';
+  return n+' B';
+}
+
+const PROTO_COLORS = { TCP:'#0066FF', UDP:'#7C3AED', ICMP:'#FF991F', DNS:'#00875A', ARP:'#9096A2', HTTP:'#DE350B', Other:'#CBD5E0', IPv4:'#48BB78', IPv6:'#38B2AC', OSPF:'#ED8936', ICMPv6:'#F6AD55' };
+
+function renderResults(a) {
+  const totalProto = Object.values(a.protocols).reduce((s,v)=>s+v,0)||1;
+  const sortedProto = Object.entries(a.protocols).sort((x,y)=>y[1]-x[1]);
+  const maxIP = a.topIPs[0]?.[1]||1;
+  const critCount = a.findings.filter(f=>f.sev==='critical').length;
+  const highCount = a.findings.filter(f=>f.sev==='high').length;
+
+  document.getElementById('results').innerHTML = `
+    <div class="summary-strip">
+      <div class="stat-card"><div class="n">${a.totalPackets.toLocaleString()}</div><div class="l">Total packets</div></div>
+      <div class="stat-card"><div class="n">${fmt(a.totalBytes)}</div><div class="l">Total data</div></div>
+      <div class="stat-card"><div class="n">${Object.keys(a.topIPs.reduce((m,[ip])=>{m[ip]=1;return m},{})).length||a.topIPs.length}</div><div class="l">Unique IPs</div></div>
+      <div class="stat-card"><div class="n">${a.dnsQueries.length}</div><div class="l">DNS queries</div></div>
+      <div class="stat-card"><div class="n" style="color:${critCount>0?'var(--red)':highCount>0?'var(--amber)':'var(--green)'}">${a.findings.length}</div><div class="l">Findings</div></div>
+    </div>
+
+    <div class="results-grid">
+
+      <!-- Findings -->
+      <div class="panel full">
+        <div class="ph"><div class="pt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>Security Findings</div><div class="ps">${a.findings.length} total</div></div>
+        <div class="pb" style="padding:16px 18px">
+          ${a.findings.length === 0
+            ? '<div style="text-align:center;padding:24px;color:var(--text-m);font-size:14px;">✓ No suspicious patterns detected</div>'
+            : a.findings.map(f=>`<div class="finding ${f.sev}"><div class="fh"><span class="sev ${f.sev}">${f.sev}</span><span class="ft">${f.title}</span></div><div class="fd">${f.desc}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Protocol distribution -->
+      <div class="panel">
+        <div class="ph"><div class="pt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Protocol Distribution</div></div>
+        <div class="proto-bars">
+          ${sortedProto.map(([p,c])=>`
+            <div class="proto-bar">
+              <span class="proto-label">${p}</span>
+              <div class="proto-track"><div class="proto-fill" style="width:${(c/totalProto*100).toFixed(1)}%;background:${PROTO_COLORS[p]||'#9096A2'}"></div></div>
+              <span class="proto-pct">${(c/totalProto*100).toFixed(0)}%</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Top talkers -->
+      <div class="panel">
+        <div class="ph"><div class="pt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10z"/></svg>Top Talkers</div></div>
+        <div style="padding:8px 18px">
+          ${a.topIPs.slice(0,8).map(([ip,c])=>`
+            <div class="talker">
+              <span class="talker-ip">${ip}</span>
+              <div class="talker-bar-wrap"><div class="talker-bar" style="width:${(c/maxIP*100).toFixed(0)}%"></div></div>
+              <span class="talker-count">${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Top ports -->
+      <div class="panel">
+        <div class="ph"><div class="pt">Top Destination Ports</div></div>
+        <div class="pb"><table class="tbl">
+          <thead><tr><th>Port</th><th>Service</th><th>Packets</th></tr></thead>
+          <tbody>${a.topPorts.map(([p,c])=>`<tr><td class="mono">${p}</td><td class="mono" style="color:var(--text-s)">${portName(+p)}</td><td class="mono">${c}</td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>
+
+      <!-- DNS queries -->
+      ${a.dnsQueries.length ? `<div class="panel">
+        <div class="ph"><div class="pt">DNS Queries</div><div class="ps">${a.dnsQueries.length} unique</div></div>
+        <div class="pb"><table class="tbl"><thead><tr><th>Domain</th></tr></thead>
+        <tbody>${a.dnsQueries.map(d=>`<tr><td class="mono">${d}</td></tr>`).join('')}</tbody></table></div>
+      </div>` : ''}
+
+      <!-- HTTP hosts -->
+      ${a.httpHosts.length ? `<div class="panel">
+        <div class="ph"><div class="pt">HTTP Hosts</div><div class="ps">${a.httpHosts.length} unique</div></div>
+        <div class="pb"><table class="tbl"><thead><tr><th>Host</th></tr></thead>
+        <tbody>${a.httpHosts.map(h=>`<tr><td class="mono">${h}</td></tr>`).join('')}</tbody></table></div>
+      </div>` : ''}
+
+    </div>`;
+}
+
+function portName(p) {
+  const m={80:'HTTP',443:'HTTPS',22:'SSH',23:'Telnet',21:'FTP',25:'SMTP',53:'DNS',3389:'RDP',3306:'MySQL',5432:'PostgreSQL',6379:'Redis',27017:'MongoDB',8080:'HTTP-Alt',8443:'HTTPS-Alt',993:'IMAPS',587:'SMTP',110:'POP3',143:'IMAP',445:'SMB',139:'NetBIOS',161:'SNMP',123:'NTP',389:'LDAP',636:'LDAPS'};
+  return m[p]||'';
+}
+
+function showError(msg) {
+  document.getElementById('progressWrap').style.display='none';
+  document.getElementById('results').innerHTML=`<div style="background:var(--rl);border:1px solid rgba(222,53,11,.2);border-radius:var(--rs);padding:16px 18px;color:var(--red);font-size:14px">${msg}</div>`;
+}
+
+// ─── DEMO MODE ──────────────────────────────────────────────────────────────
+function loadDemo() {
+  setProgress(30, 'Generating demo data…');
+  setTimeout(() => {
+    setProgress(70, 'Analyzing…');
+    setTimeout(() => {
+      document.getElementById('progressWrap').style.display='none';
+      renderResults(getDemoData());
+    }, 400);
+  }, 300);
+}
+
+function getDemoData() {
+  return {
+    filename:'demo-capture.pcap', filesize:2481920, totalPackets:8742, totalBytes:4823490,
+    protocols:{ TCP:5120, UDP:2340, ICMP:820, ARP:320, OSPF:142 },
+    topIPs:[['192.168.1.105',2341],['10.0.0.1',1823],['8.8.8.8',934],['185.220.101.47',422],['192.168.1.1',389],['172.16.0.5',234],['10.0.0.50',198],['1.1.1.1',156]],
+    topPorts:[['443',3210],['80',1823],['53',934],['22',422],['23',89],['3389',76],['3306',45],['6379',32]],
+    tcpCount:5120, udpCount:2340, icmpCount:820,
+    findings:[
+      { sev:'critical', title:'Telnet traffic detected', desc:'192.168.1.105 → 10.0.0.50:23 — Cleartext protocol, credentials visible in stream. Replace with SSH.' },
+      { sev:'critical', title:'Cleartext credentials: HTTP Basic Auth', desc:'192.168.1.105:54321 → 172.16.0.5:80 — Base64-encoded credentials sent over plain HTTP.' },
+      { sev:'high', title:'Possible DGA domain', desc:'xkqvrtplznmf.com — low vowel ratio (8%) may indicate domain generation algorithm (C2 beacon?)' },
+      { sev:'high', title:'Port scan detected (34 unique ports)', desc:'185.220.101.47 accessed 34 distinct ports in short window — likely reconnaissance.' },
+      { sev:'high', title:'Known Tor exit node communicating', desc:'185.220.101.47 is a known Tor exit node. Investigate traffic origin.' },
+      { sev:'medium', title:'Unencrypted Redis traffic (port 6379)', desc:'192.168.1.105 → 10.0.0.50:6379 — Redis accessible without TLS. Potential data exposure.' },
+      { sev:'medium', title:'RDP exposed to multiple IPs', desc:'10.0.0.1:3389 received connections from 3 external IPs — restrict access via firewall.' },
+    ],
+    dnsQueries:['api.github.com','xkqvrtplznmf.com','fonts.googleapis.com','update.microsoft.com','telemetry.example.com','cdn.cloudflare.com','accounts.google.com','s3.amazonaws.com','ztvqplmnrxb.net','ocsp.digicert.com'],
+    httpHosts:['internal-dashboard.local','update-service.local:8080']
+  };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Header Analyzer — BreachFocus Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF8;--bg-card:#fff;--bg-dark:#0C1117;--text:#1A1D23;--text-s:#5A5F6B;--text-m:#9096A2;--accent:#0066FF;--al:#E8F0FF;--ad:#0047B3;--green:#00875A;--gl:#E3FCEF;--red:#DE350B;--rl:#FFEBE6;--amber:#FF991F;--aml:#FFF7E6;--border:rgba(0,0,0,.08);--bs:rgba(0,0,0,.15);--r:12px;--rs:8px;--rx:6px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;--dsp:'Fraunces',Georgia,serif;--mw:1200px;--nh:64px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nh);background:rgba(250,250,248,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--mw);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--mono);font-weight:700;font-size:12px}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-s);text-decoration:none;padding:7px 14px;border-radius:var(--rx);border:1px solid var(--border);transition:all .2s}
+.nav-back:hover{color:var(--text);border-color:var(--bs)}
+.hero{padding:calc(var(--nh)+48px) 2rem 36px;max-width:var(--mw);margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:var(--rl);color:var(--red);font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:var(--dsp);font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.hero p{font-size:16px;color:var(--text-s);max-width:640px}
+.body{max-width:var(--mw);margin:0 auto;padding:0 2rem 80px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.panel{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
+.panel.full{grid-column:1/-1}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.pb{padding:16px 18px}
+textarea{width:100%;height:280px;font-family:var(--mono);font-size:12px;line-height:1.7;border:1.5px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--bg-dark);color:#E2E8F0;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:rgba(255,255,255,.25)}
+.btn{width:100%;margin-top:12px;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:var(--ad)}
+.demo-btn{width:100%;margin-top:8px;padding:10px;background:var(--bg);color:var(--text-s);border:1.5px solid var(--border);border-radius:var(--rs);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s}
+.demo-btn:hover{border-color:var(--bs);color:var(--text)}
+
+.verdict{border-radius:var(--rs);padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.verdict.safe{background:var(--gl);border:1px solid rgba(0,135,90,.2)}
+.verdict.suspicious{background:var(--aml);border:1px solid rgba(255,153,31,.2)}
+.verdict.malicious{background:var(--rl);border:1px solid rgba(222,53,11,.2)}
+.verdict-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.verdict.safe .verdict-icon{background:var(--green);color:#fff}
+.verdict.suspicious .verdict-icon{background:var(--amber);color:#fff}
+.verdict.malicious .verdict-icon{background:var(--red);color:#fff}
+.verdict-text h3{font-size:16px;font-weight:700}
+.verdict-text p{font-size:13px;color:var(--text-s)}
+
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.badge-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600}
+.badge-pill.pass{background:var(--gl);color:var(--green)}
+.badge-pill.fail{background:var(--rl);color:var(--red)}
+.badge-pill.warn{background:var(--aml);color:var(--amber)}
+.badge-pill.info{background:var(--al);color:var(--accent)}
+
+.row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.row:last-child{border-bottom:none}
+.rl{color:var(--text-s);flex-shrink:0;width:120px;font-weight:500}
+.rv{font-family:var(--mono);font-size:12px;word-break:break-all;flex:1}
+
+.hop{border-left:3px solid var(--border);padding:12px 16px;margin-bottom:10px;border-radius:0 var(--rs) var(--rs) 0;background:var(--bg)}
+.hop.first{border-color:var(--green)}
+.hop.mid{border-color:var(--accent)}
+.hop.last{border-color:var(--amber)}
+.hop-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-m);margin-bottom:6px}
+.hop-val{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.6}
+.hop-delay{font-size:11px;color:var(--text-m);margin-top:4px}
+
+.finding{padding:12px 14px;border-radius:var(--rs);margin-bottom:8px;border-left:3px solid transparent}
+.finding.critical{background:var(--rl);border-color:var(--red)}
+.finding.high{background:var(--aml);border-color:var(--amber)}
+.finding.info{background:var(--al);border-color:var(--accent)}
+.finding.ok{background:var(--gl);border-color:var(--green)}
+.fsev{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.finding.critical .fsev{color:var(--red)}.finding.high .fsev{color:var(--amber)}.finding.info .fsev{color:var(--accent)}.finding.ok .fsev{color:var(--green)}
+.ftitle{font-size:13px;font-weight:600;margin:2px 0}
+.fdesc{font-size:12px;color:var(--text-s)}
+
+.empty{text-align:center;padding:48px 20px;color:var(--text-m)}
+.empty svg{opacity:.3;margin-bottom:12px}
+.empty p{font-size:14px}
+
+@media(max-width:900px){.layout{grid-template-columns:1fr}.hero,.body{padding-left:1rem;padding-right:1rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo"><div class="logo-icon">BF</div>BreachFocus</a>
+  <a href="index.html" class="nav-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>All tools</a>
+</div></nav>
+
+<div class="hero">
+  <div class="badge">⚡ Quick Tools</div>
+  <h1>Email Header Analyzer</h1>
+  <p>Paste raw email headers to trace the delivery path, validate SPF/DKIM/DMARC, detect spoofing, and identify phishing indicators.</p>
+</div>
+
+<div class="body">
+  <div class="layout">
+    <div class="panel">
+      <div class="ph"><div class="pt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Raw Headers</div></div>
+      <div class="pb">
+        <textarea id="headerInput" placeholder="Paste full email headers here...
+Received: from mail.example.com (...)
+From: sender@example.com
+To: victim@company.com
+Subject: Urgent: Action required
+..."></textarea>
+        <button class="btn" onclick="analyze()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Analyze Headers
+        </button>
+        <button class="demo-btn" onclick="loadDemo()">Load phishing example</button>
+      </div>
+    </div>
+
+    <div id="resultsPanel">
+      <div class="panel">
+        <div class="ph"><div class="pt">Results</div></div>
+        <div class="pb"><div class="empty">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <p>Paste headers and click Analyze.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEMO = `Delivered-To: victim@company.com
+Received: from mail-spoofed.attacker.ru (mail-spoofed.attacker.ru [185.220.101.47])
+        by mx.company.com with ESMTP id abc123
+        for <victim@company.com>; Mon, 18 Mar 2026 09:14:33 +0000
+Received: from localhost (localhost [127.0.0.1])
+        by mail-spoofed.attacker.ru with ESMTP id xyz789
+        for <victim@company.com>; Mon, 18 Mar 2026 09:14:28 +0000
+X-Spam-Status: Yes, score=8.4
+X-Spam-Flag: YES
+Authentication-Results: mx.company.com;
+       spf=fail (sender IP is 185.220.101.47) smtp.mailfrom=payroll@acmecorp.com;
+       dkim=none;
+       dmarc=fail action=none header.from=acmecorp.com
+Received-SPF: fail (mx.company.com: domain of payroll@acmecorp.com does not designate 185.220.101.47 as permitted sender)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=attacker.ru; s=default;
+From: "Payroll Department" <payroll@acmecorp.com>
+Reply-To: sneaky-reply@attacker.ru
+To: victim@company.com
+Subject: URGENT: Payroll update required - action needed by EOD
+Date: Mon, 18 Mar 2026 09:14:25 +0000
+Message-ID: <20260318091425.attacker.ru>
+X-Mailer: PHPMailer 5.2.0
+X-Originating-IP: 185.220.101.47
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8`;
+
+function loadDemo() { document.getElementById('headerInput').value = DEMO; analyze(); }
+
+function getHeader(lines, key) {
+  const re = new RegExp('^' + key + ':\\s*(.+)', 'i');
+  for(const l of lines) { const m = l.match(re); if(m) return m[1].trim(); }
+  return null;
+}
+
+function getAllHeaders(lines, key) {
+  const re = new RegExp('^' + key + ':\\s*(.+)', 'i');
+  return lines.filter(l=>re.test(l)).map(l=>l.match(re)[1].trim());
+}
+
+function analyze() {
+  const raw = document.getElementById('headerInput').value.trim();
+  if(!raw) return;
+
+  // Unfold headers (RFC 2822)
+  const unfolded = raw.replace(/\r\n([ \t])/g,' $1').replace(/\n([ \t])/g,' $1');
+  const lines = unfolded.split(/\r?\n/);
+
+  const from = getHeader(lines,'From') || '';
+  const replyTo = getHeader(lines,'Reply-To') || '';
+  const returnPath = getHeader(lines,'Return-Path') || '';
+  const subject = getHeader(lines,'Subject') || '';
+  const date = getHeader(lines,'Date') || '';
+  const msgId = getHeader(lines,'Message-ID') || '';
+  const mailer = getHeader(lines,'X-Mailer') || getHeader(lines,'X-Originating-Mailer') || '';
+  const origIP = getHeader(lines,'X-Originating-IP') || '';
+  const spamFlag = getHeader(lines,'X-Spam-Flag') || '';
+  const spamStatus = getHeader(lines,'X-Spam-Status') || '';
+  const authResults = getAllHeaders(lines,'Authentication-Results').join(' ');
+  const spfResult = getHeader(lines,'Received-SPF') || '';
+  const dkimSig = getHeader(lines,'DKIM-Signature') || '';
+  const receivedLines = getAllHeaders(lines,'Received');
+
+  // Parse auth
+  const spfPass = /spf=pass/i.test(authResults) || /^pass/i.test(spfResult);
+  const spfFail = /spf=fail/i.test(authResults) || /^fail/i.test(spfResult);
+  const spfSoft = /spf=softfail/i.test(authResults);
+  const dkimPass = /dkim=pass/i.test(authResults);
+  const dkimFail = /dkim=fail/i.test(authResults) || /dkim=none/i.test(authResults);
+  const dmarcPass = /dmarc=pass/i.test(authResults);
+  const dmarcFail = /dmarc=fail/i.test(authResults);
+
+  // From domain
+  const fromEmail = from.match(/[\w.+-]+@[\w.-]+/)?.[0] || '';
+  const fromDomain = fromEmail.split('@')[1] || '';
+  const replyDomain = replyTo.match(/[\w.+-]+@[\w.-]+/)?.[0]?.split('@')[1] || '';
+  const returnDomain = returnPath.match(/[\w.+-]+@[\w.-]+/)?.[0]?.split('@')[1] || '';
+
+  // Reply-to mismatch
+  const replyMismatch = replyDomain && fromDomain && replyDomain !== fromDomain;
+  const returnMismatch = returnDomain && fromDomain && returnDomain !== fromDomain;
+
+  // Findings
+  const findings = [];
+
+  if(spamFlag.toUpperCase()==='YES' || /score=([89]|\d{2})/i.test(spamStatus))
+    findings.push({ sev:'critical', title:'Marked as SPAM by mail server', desc:`${spamStatus||'X-Spam-Flag: YES'} — mail server flagged this as spam.` });
+  if(spfFail)
+    findings.push({ sev:'critical', title:'SPF FAIL — sender not authorized', desc:`The sending IP is not authorized to send mail for ${fromDomain}. Strong spoofing indicator.` });
+  if(spfSoft)
+    findings.push({ sev:'high', title:'SPF SoftFail', desc:`${fromDomain} has a ~all SPF policy — sender not explicitly authorized.` });
+  if(dmarcFail)
+    findings.push({ sev:'critical', title:'DMARC FAIL', desc:`Message failed DMARC policy for ${fromDomain}. Combined SPF/DKIM alignment check failed.` });
+  if(dkimFail)
+    findings.push({ sev:'high', title:'DKIM missing or invalid', desc:'No valid DKIM signature found. Sender authenticity cannot be cryptographically verified.' });
+  if(replyMismatch)
+    findings.push({ sev:'critical', title:'Reply-To domain mismatch', desc:`From: ${fromDomain} but Reply-To: ${replyDomain} — replies will go to a different domain. Classic phishing technique.` });
+  if(returnMismatch)
+    findings.push({ sev:'high', title:'Return-Path domain mismatch', desc:`From: ${fromDomain} but Return-Path: ${returnDomain} — bounce messages go to a different address.` });
+  if(origIP || (receivedLines.length && /185\.|45\.|91\.|194\./.test(receivedLines[0]))) {
+    const ip = origIP || receivedLines[0]?.match(/\[(\d+\.\d+\.\d+\.\d+)\]/)?.[1] || '';
+    if(ip) findings.push({ sev:'high', title:`Suspicious originating IP: ${ip}`, desc:'Cross-check this IP against threat intel feeds (AbuseIPDB, Spamhaus).' });
+  }
+  if(mailer && /phpmailer|sendgrid|mailchimp/i.test(mailer))
+    findings.push({ sev:'info', title:`Sent via: ${mailer}`, desc:'Identifies the sending software. Bulk/phishing kits often use PHPMailer.' });
+  if(dkimSig && /d=/.test(dkimSig)) {
+    const dkimDomain = dkimSig.match(/d=([\w.-]+)/)?.[1];
+    if(dkimDomain && fromDomain && dkimDomain !== fromDomain)
+      findings.push({ sev:'high', title:`DKIM domain mismatch`, desc:`DKIM signed by ${dkimDomain} but email is From: ${fromDomain}` });
+  }
+  if(spfPass && dkimPass && dmarcPass)
+    findings.push({ sev:'ok', title:'SPF, DKIM and DMARC all pass', desc:'Authentication chain is intact. This does not guarantee legitimate intent but rules out basic spoofing.' });
+
+  // Parse received hops
+  const hops = receivedLines.map((r,i) => {
+    const ip = r.match(/\[(\d+\.\d+\.\d+\.\d+)\]/)?.[1] || '';
+    const host = r.match(/from ([\w.-]+)/i)?.[1] || '';
+    const ts = r.match(/;\s*(.+)$/)?.[1]?.trim() || '';
+    return { hop: i+1, raw:r, ip, host, ts };
+  }).reverse();
+
+  // Verdict
+  const criticals = findings.filter(f=>f.sev==='critical').length;
+  const highs = findings.filter(f=>f.sev==='high').length;
+  const verdict = criticals >= 2 ? 'malicious' : criticals >= 1 || highs >= 2 ? 'suspicious' : 'safe';
+  const verdictLabel = verdict==='malicious' ? '🚨 Likely Phishing/Spoofed' : verdict==='suspicious' ? '⚠ Suspicious' : '✓ Appears Legitimate';
+  const verdictDesc = verdict==='malicious' ? 'Multiple strong phishing/spoofing indicators detected. Do not click links or reply.' : verdict==='suspicious' ? 'Some suspicious indicators. Verify sender through a separate channel before acting.' : 'No major spoofing indicators found.';
+
+  document.getElementById('resultsPanel').innerHTML = `
+    <div class="panel full">
+      <div class="ph"><div class="pt">Analysis Results</div></div>
+      <div class="pb">
+        <div class="verdict ${verdict}">
+          <div class="verdict-icon">${verdict==='malicious'?'🚨':verdict==='suspicious'?'⚠':'✓'}</div>
+          <div class="verdict-text"><h3>${verdictLabel}</h3><p>${verdictDesc}</p></div>
+        </div>
+
+        <div class="badge-row">
+          <span class="badge-pill ${spfPass?'pass':spfFail?'fail':'warn'}">SPF ${spfPass?'Pass':spfFail?'Fail':'Softfail'}</span>
+          <span class="badge-pill ${dkimPass?'pass':'fail'}">DKIM ${dkimPass?'Pass':'Fail/None'}</span>
+          <span class="badge-pill ${dmarcPass?'pass':dmarcFail?'fail':'warn'}">DMARC ${dmarcPass?'Pass':dmarcFail?'Fail':'Unknown'}</span>
+        </div>
+
+        <div class="row"><span class="rl">From</span><span class="rv">${from||'—'}</span></div>
+        ${replyTo?`<div class="row"><span class="rl">Reply-To</span><span class="rv" style="${replyMismatch?'color:var(--red)'  :''}">${replyTo}</span></div>`:''}
+        ${returnPath?`<div class="row"><span class="rl">Return-Path</span><span class="rv">${returnPath}</span></div>`:''}
+        <div class="row"><span class="rl">Subject</span><span class="rv">${subject||'—'}</span></div>
+        <div class="row"><span class="rl">Date</span><span class="rv">${date||'—'}</span></div>
+        ${origIP?`<div class="row"><span class="rl">Orig. IP</span><span class="rv">${origIP}</span></div>`:''}
+        ${mailer?`<div class="row"><span class="rl">Mailer</span><span class="rv">${mailer}</span></div>`:''}
+        ${msgId?`<div class="row"><span class="rl">Message-ID</span><span class="rv">${msgId}</span></div>`:''}
+      </div>
+    </div>
+
+    <div class="panel full" style="margin-top:16px">
+      <div class="ph"><div class="pt">Security Findings</div></div>
+      <div class="pb">
+        ${findings.length===0?'<div style="color:var(--text-m);font-size:14px;text-align:center;padding:12px">No issues detected.</div>':findings.map(f=>`
+          <div class="finding ${f.sev}">
+            <div class="fsev">${f.sev}</div>
+            <div class="ftitle">${f.title}</div>
+            <div class="fdesc">${f.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    ${hops.length ? `<div class="panel full" style="margin-top:16px">
+      <div class="ph"><div class="pt">Delivery Hops (${hops.length})</div></div>
+      <div class="pb">
+        ${hops.map((h,i)=>`<div class="hop ${i===0?'first':i===hops.length-1?'last':'mid'}">
+          <div class="hop-title">Hop ${h.hop} — ${i===0?'Origin':i===hops.length-1?'Final destination':'Relay'}</div>
+          <div class="hop-val">${h.host||'unknown'} ${h.ip?'['+h.ip+']':''}</div>
+          ${h.ts?`<div class="hop-delay">${h.ts}</div>`:''}
+        </div>`).join('')}
+      </div>
+    </div>` : ''}`;
+}
+
+document.getElementById('headerInput').addEventListener('keydown', e => { if((e.ctrlKey||e.metaKey)&&e.key==='Enter') analyze(); });
+</script>
+</body>
+</html>

@@ -221,90 +221,72 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
   </div>
 
-  <!-- COMING SOON -->
   <div class="category">
     <div class="category-header">
-      <div class="cat-icon" style="background:rgba(0,0,0,0.04);color:var(--text-muted);">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div class="cat-icon" style="background:#F0E6FF;color:#7C3AED;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
       </div>
-      <div class="cat-title" style="color:var(--text-muted);">Coming Soon</div>
+      <div class="cat-title">Network &amp; Traffic</div>
     </div>
     <div class="tools-grid">
-      <div class="tool-card coming-soon">
-        <div class="tool-card-header">
-          <div class="tool-icon" style="background:rgba(0,0,0,0.04);color:var(--text-muted);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          </div>
-          <span class="tool-status status-soon">Soon</span>
-        </div>
-        <h3>CVE Search &amp; CVSS Calculator</h3>
-        <p>Search CVEs, calculate CVSS v3.1 scores interactively, and assess exploitability metrics for vulnerability prioritization.</p>
-        <div class="tool-tags"><span class="tool-tag">NVD API</span><span class="tool-tag">CVSS v3.1</span></div>
-      </div>
-      <div class="tool-card coming-soon">
-        <div class="tool-card-header">
-          <div class="tool-icon" style="background:rgba(0,0,0,0.04);color:var(--text-muted);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <span class="tool-status status-soon">Soon</span>
-        </div>
+      <a href="dns-lookup.html" class="tool-card"><div class="tool-card-header"><div class="tool-icon" style="background:#F0E6FF;color:#7C3AED;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div><span class="tool-status status-live">Live</span></div><h3>DNS Lookup &amp; Reverse DNS</h3><p>Query all DNS record types, check SPF/DKIM/DMARC, and perform reverse DNS lookups.</p><div class="tool-tags"><span class="tool-tag">DNS</span><span class="tool-tag">SPF/DMARC</span><span class="tool-tag">Reverse DNS</span></div></a>
+      <a href="ssl-inspector.html" class="tool-card"><div class="tool-card-header"><div class="tool-icon" style="background:#E3FCEF;color:#00875A;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="tool-status status-live">Live</span></div><h3>SSL Certificate Inspector</h3><p>Check TLS validity, expiry, SANs, CT log history and common misconfigs for any domain.</p><div class="tool-tags"><span class="tool-tag">TLS/SSL</span><span class="tool-tag">Cert expiry</span><span class="tool-tag">CT logs</span></div></a>
+      <a href="ip-reputation.html" class="tool-card"><div class="tool-card-header"><div class="tool-icon" style="background:#FFEBE6;color:#DE350B;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="tool-status status-live">Live</span></div><h3>IP &amp; Domain Reputation</h3><p>Check if an IP or domain is flagged across AbuseIPDB, Tor exit lists, Spamhaus, SORBS, and URIBL.</p><div class="tool-tags"><span class="tool-tag">Threat intel</span><span class="tool-tag">DNSBL</span><span class="tool-tag">Tor</span></div></a>
+    </div>
+  </div>
+  <!-- NETWORK & TRAFFIC -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-icon" style="background:#F0E6FF;color:#7C3AED;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div>
+      <div class="cat-title">Network &amp; Traffic</div>
+    </div>
+    <div class="tools-grid">
+      <a href="pcap-analyzer.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#F0E6FF;color:#7C3AED;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><span class="tool-status status-live">Live</span></div>
+        <h3>PCAP Analyzer</h3>
+        <p>Upload .pcap/.pcapng files to detect suspicious traffic, protocol distribution, top talkers, DGA domains, and cleartext credentials. Fully client-side.</p>
+        <div class="tool-tags"><span class="tool-tag">PCAP</span><span class="tool-tag">Network</span><span class="tool-tag">Threat detection</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- QUICK TOOLS -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-icon" style="background:#FFF7E6;color:#FF991F;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <div class="cat-title">Quick Tools</div>
+    </div>
+    <div class="tools-grid">
+      <a href="email-header-analyzer.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#FFEBE6;color:#DE350B;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><span class="tool-status status-live">Live</span></div>
         <h3>Email Header Analyzer</h3>
-        <p>Parse email headers to trace routing, detect spoofing, validate SPF/DKIM/DMARC, and identify phishing indicators.</p>
-        <div class="tool-tags"><span class="tool-tag">Phishing</span><span class="tool-tag">SPF/DKIM</span></div>
-      </div>
-      <div class="tool-card coming-soon">
-        <div class="tool-card-header">
-          <div class="tool-icon" style="background:rgba(0,0,0,0.04);color:var(--text-muted);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          </div>
-          <span class="tool-status status-soon">Soon</span>
-        </div>
-        <h3>MITRE ATT&amp;CK TTP Mapper</h3>
-        <p>Map threat actor TTPs to the MITRE ATT&CK framework, visualize attack chains, and identify detection coverage gaps.</p>
-        <div class="tool-tags"><span class="tool-tag">MITRE ATT&CK</span><span class="tool-tag">TTPs</span></div>
-      </div>
+        <p>Trace delivery hops, validate SPF/DKIM/DMARC, detect spoofing and phishing indicators from raw email headers.</p>
+        <div class="tool-tags"><span class="tool-tag">Phishing</span><span class="tool-tag">SPF/DMARC</span><span class="tool-tag">Email</span></div>
+      </a>
+      <a href="jwt-decoder.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#E8F0FF;color:#0066FF;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="tool-status status-live">Live</span></div>
+        <h3>JWT Decoder</h3>
+        <p>Decode JSON Web Tokens, inspect claims, check expiry, detect alg:none and other misconfigurations. Client-side only.</p>
+        <div class="tool-tags"><span class="tool-tag">JWT</span><span class="tool-tag">Auth</span><span class="tool-tag">Tokens</span></div>
+      </a>
+      <a href="cidr-calculator.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#E3FCEF;color:#00875A;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10z"/></svg></div><span class="tool-status status-live">Live</span></div>
+        <h3>CIDR / IP Range Calculator</h3>
+        <p>Calculate network address, broadcast, host range, subnet mask and usable IPs. Check IP containment and split subnets.</p>
+        <div class="tool-tags"><span class="tool-tag">CIDR</span><span class="tool-tag">Subnetting</span><span class="tool-tag">IPv4</span></div>
+      </a>
+      <a href="encode-decode-hash.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#FFF7E6;color:#FF991F;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><span class="tool-status status-live">Live</span></div>
+        <h3>Encode / Decode / Hash</h3>
+        <p>Base64, URL encode, Hex, HTML entities, and SHA-256/SHA-512/MD5 hashing. Includes file hash calculator. 100% client-side.</p>
+        <div class="tool-tags"><span class="tool-tag">Base64</span><span class="tool-tag">SHA-256</span><span class="tool-tag">Hex</span></div>
+      </a>
+      <a href="cvss-calculator.html" class="tool-card">
+        <div class="tool-card-header"><div class="tool-icon" style="background:#FFEBE6;color:#DE350B;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="tool-status status-live">Live</span></div>
+        <h3>CVSS v3.1 Calculator</h3>
+        <p>Interactive CVSS v3.1 base score calculator. Select all 8 metrics to compute score, severity rating, and vector string.</p>
+        <div class="tool-tags"><span class="tool-tag">CVSS</span><span class="tool-tag">Vulnerability</span><span class="tool-tag">Scoring</span></div>
+      </a>
     </div>
   </div>
 
-</div>
-
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-copy">&copy; 2026 BreachFocus. All tools run client-side — no data is sent to any server.</div>
-    <div class="footer-links">
-      <a href="../index.html">Home</a>
-      <a href="../index.html#contact">Contact</a>
-    </div>
-  </div>
-</footer>
-
-<script>
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
-});
-
-const mobileToggle = document.getElementById('mobileToggle');
-const navLinks = document.getElementById('navLinks');
-mobileToggle.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  mobileToggle.innerHTML = isOpen
-    ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-    : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>';
-});
-
-document.querySelectorAll('.nav-links a').forEach(a => {
-  a.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    mobileToggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>';
-  });
-});
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.nav-inner')) {
-    navLinks.classList.remove('open');
-    mobileToggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>';
-  }
-});
-</script>
-</body>
-</html>

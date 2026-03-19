@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVSS v3.1 Calculator — BreachFocus Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF8;--bg-card:#fff;--text:#1A1D23;--text-s:#5A5F6B;--text-m:#9096A2;--accent:#0066FF;--al:#E8F0FF;--ad:#0047B3;--green:#00875A;--gl:#E3FCEF;--red:#DE350B;--rl:#FFEBE6;--amber:#FF991F;--aml:#FFF7E6;--border:rgba(0,0,0,.08);--bs:rgba(0,0,0,.15);--r:12px;--rs:8px;--rx:6px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;--dsp:'Fraunces',Georgia,serif;--mw:1200px;--nh:64px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nh);background:rgba(250,250,248,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--mw);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--mono);font-weight:700;font-size:12px}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-s);text-decoration:none;padding:7px 14px;border-radius:var(--rx);border:1px solid var(--border);transition:all .2s}
+.nav-back:hover{color:var(--text);border-color:var(--bs)}
+.hero{padding:calc(var(--nh)+48px) 2rem 36px;max-width:var(--mw);margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:var(--rl);color:var(--red);font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:var(--dsp);font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.hero p{font-size:16px;color:var(--text-s);max-width:640px}
+.body{max-width:var(--mw);margin:0 auto;padding:0 2rem 80px}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+
+/* Score panel */
+.score-panel{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);position:sticky;top:calc(var(--nh)+20px)}
+.score-big{padding:32px 24px;text-align:center;border-bottom:1px solid var(--border)}
+.score-num{font-size:64px;font-weight:700;font-family:var(--mono);line-height:1;transition:color .3s}
+.score-label{font-size:14px;font-weight:600;margin-top:6px}
+.score-rating{font-size:13px;color:var(--text-s);margin-top:4px}
+.score-bar-wrap{height:8px;background:var(--border);border-radius:4px;margin:16px 24px 0;overflow:hidden}
+.score-bar{height:100%;border-radius:4px;transition:width .5s ease,background .3s}
+.vector-string{padding:16px 20px;font-family:var(--mono);font-size:11px;word-break:break-all;color:var(--text-s);border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+.vector-string:hover{background:var(--al)}
+.vector-string .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-m);margin-bottom:4px}
+.score-breakdown{padding:16px 20px}
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.breakdown-row:last-child{border-bottom:none}
+.br-label{color:var(--text-s)}
+.br-val{font-family:var(--mono);font-weight:600}
+.btn-reset{width:calc(100% - 40px);margin:0 20px 16px;padding:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;color:var(--text-s);transition:all .2s}
+.btn-reset:hover{border-color:var(--red);color:var(--red)}
+
+/* Metric groups */
+.metric-group{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);margin-bottom:16px;overflow:hidden}
+.mg-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.mg-title{font-size:14px;font-weight:700}
+.mg-desc{font-size:12px;color:var(--text-m);margin-left:auto}
+.metric-row{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.metric-row:last-child{border-bottom:none}
+.metric-info{flex:1;min-width:160px}
+.metric-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.metric-hint{font-size:12px;color:var(--text-m)}
+.metric-options{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.opt{padding:6px 14px;border-radius:var(--rx);font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--text-s);transition:all .2s;font-family:var(--font)}
+.opt:hover{border-color:var(--bs);color:var(--text)}
+.opt.selected.none{background:#E0E0E0;color:#555;border-color:#bbb}
+.opt.selected.low{background:var(--gl);color:var(--green);border-color:var(--green)}
+.opt.selected.medium{background:var(--aml);color:var(--amber);border-color:var(--amber)}
+.opt.selected.high{background:var(--rl);color:var(--red);border-color:var(--red)}
+.opt.selected.critical{background:var(--red);color:#fff;border-color:var(--red)}
+.opt.selected.neutral{background:var(--al);color:var(--accent);border-color:var(--accent)}
+
+@media(max-width:900px){.layout{grid-template-columns:1fr}.score-panel{position:static}.hero,.body{padding-left:1rem;padding-right:1rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo"><div class="logo-icon">BF</div>BreachFocus</a>
+  <a href="index.html" class="nav-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>All tools</a>
+</div></nav>
+<div class="hero">
+  <div class="badge">⚡ Quick Tools</div>
+  <h1>CVSS v3.1 Calculator</h1>
+  <p>Calculate CVSS v3.1 base scores interactively. Select values for all 8 base metrics to compute the score, rating, and vector string.</p>
+</div>
+<div class="body">
+  <div class="layout">
+    <div>
+      <!-- Attack Vector -->
+      <div class="metric-group">
+        <div class="mg-header"><div class="mg-title">Exploitability Metrics</div><div class="mg-desc">How the vulnerability is exploited</div></div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Attack Vector (AV)</div><div class="metric-hint">How the vulnerability is exploitable</div></div>
+          <div class="metric-options" id="AV">
+            <button class="opt" data-val="N" data-sev="critical" onclick="sel('AV','N',this)">Network</button>
+            <button class="opt" data-val="A" data-sev="high" onclick="sel('AV','A',this)">Adjacent</button>
+            <button class="opt" data-val="L" data-sev="medium" onclick="sel('AV','L',this)">Local</button>
+            <button class="opt" data-val="P" data-sev="low" onclick="sel('AV','P',this)">Physical</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Attack Complexity (AC)</div><div class="metric-hint">Conditions beyond attacker's control</div></div>
+          <div class="metric-options" id="AC">
+            <button class="opt" data-val="L" data-sev="high" onclick="sel('AC','L',this)">Low</button>
+            <button class="opt" data-val="H" data-sev="medium" onclick="sel('AC','H',this)">High</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Privileges Required (PR)</div><div class="metric-hint">Privileges attacker must possess</div></div>
+          <div class="metric-options" id="PR">
+            <button class="opt" data-val="N" data-sev="critical" onclick="sel('PR','N',this)">None</button>
+            <button class="opt" data-val="L" data-sev="medium" onclick="sel('PR','L',this)">Low</button>
+            <button class="opt" data-val="H" data-sev="low" onclick="sel('PR','H',this)">High</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">User Interaction (UI)</div><div class="metric-hint">Requirement for user participation</div></div>
+          <div class="metric-options" id="UI">
+            <button class="opt" data-val="N" data-sev="high" onclick="sel('UI','N',this)">None</button>
+            <button class="opt" data-val="R" data-sev="medium" onclick="sel('UI','R',this)">Required</button>
+          </div>
+        </div>
+      </div>
+      <!-- Scope -->
+      <div class="metric-group">
+        <div class="mg-header"><div class="mg-title">Scope</div><div class="mg-desc">Can impact reach beyond the vulnerable component?</div></div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Scope (S)</div><div class="metric-hint">Impact on other components</div></div>
+          <div class="metric-options" id="S">
+            <button class="opt" data-val="U" data-sev="neutral" onclick="sel('S','U',this)">Unchanged</button>
+            <button class="opt" data-val="C" data-sev="high" onclick="sel('S','C',this)">Changed</button>
+          </div>
+        </div>
+      </div>
+      <!-- Impact -->
+      <div class="metric-group">
+        <div class="mg-header"><div class="mg-title">Impact Metrics</div><div class="mg-desc">Consequences of a successful exploit</div></div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Confidentiality (C)</div><div class="metric-hint">Impact on information disclosure</div></div>
+          <div class="metric-options" id="C">
+            <button class="opt" data-val="N" data-sev="none" onclick="sel('C','N',this)">None</button>
+            <button class="opt" data-val="L" data-sev="medium" onclick="sel('C','L',this)">Low</button>
+            <button class="opt" data-val="H" data-sev="high" onclick="sel('C','H',this)">High</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Integrity (I)</div><div class="metric-hint">Impact on data modification</div></div>
+          <div class="metric-options" id="I">
+            <button class="opt" data-val="N" data-sev="none" onclick="sel('I','N',this)">None</button>
+            <button class="opt" data-val="L" data-sev="medium" onclick="sel('I','L',this)">Low</button>
+            <button class="opt" data-val="H" data-sev="high" onclick="sel('I','H',this)">High</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-info"><div class="metric-name">Availability (A)</div><div class="metric-hint">Impact on resource availability</div></div>
+          <div class="metric-options" id="A">
+            <button class="opt" data-val="N" data-sev="none" onclick="sel('A','N',this)">None</button>
+            <button class="opt" data-val="L" data-sev="medium" onclick="sel('A','L',this)">Low</button>
+            <button class="opt" data-val="H" data-sev="high" onclick="sel('A','H',this)">High</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score panel -->
+    <div class="score-panel">
+      <div class="score-big">
+        <div class="score-num" id="scoreNum" style="color:var(--text-m)">—</div>
+        <div class="score-label" id="scoreLabel">Select all metrics</div>
+        <div class="score-rating" id="scoreRating">CVSS v3.1 Base Score</div>
+        <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%;background:var(--border)"></div></div>
+      </div>
+      <div class="vector-string" id="vectorString" title="Click to copy vector string">
+        <div class="label">Vector String</div>
+        <div id="vectorVal" style="margin-top:4px;font-size:12px">CVSS:3.1/AV:?/AC:?/PR:?/UI:?/S:?/C:?/I:?/A:?</div>
+      </div>
+      <div class="score-breakdown">
+        <div class="breakdown-row"><span class="br-label">Exploitability</span><span class="br-val" id="brkExpl">—</span></div>
+        <div class="breakdown-row"><span class="br-label">Impact</span><span class="br-val" id="brkImpact">—</span></div>
+        <div class="breakdown-row"><span class="br-label">Scope</span><span class="br-val" id="brkScope">—</span></div>
+      </div>
+      <button class="btn-reset" onclick="resetAll()">Reset all metrics</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// CVSS v3.1 weights
+const W = {
+  AV: {N:0.85,A:0.62,L:0.55,P:0.2},
+  AC: {L:0.77,H:0.44},
+  PR_U: {N:0.85,L:0.62,H:0.27},
+  PR_C: {N:0.85,L:0.68,H:0.50},
+  UI: {N:0.85,R:0.62},
+  C: {N:0,L:0.22,H:0.56},
+  I: {N:0,L:0.22,H:0.56},
+  A: {N:0,L:0.22,H:0.56}
+};
+
+const sel_vals = {};
+
+function sel(metric, val, btn) {
+  sel_vals[metric] = val;
+  document.querySelectorAll(`#${metric} .opt`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected', btn.dataset.sev);
+  calc();
+}
+
+function resetAll() {
+  Object.keys(sel_vals).forEach(k => delete sel_vals[k]);
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected','none','low','medium','high','critical','neutral'));
+  document.getElementById('scoreNum').textContent='—';
+  document.getElementById('scoreNum').style.color='var(--text-m)';
+  document.getElementById('scoreLabel').textContent='Select all metrics';
+  document.getElementById('scoreBar').style.width='0%';
+  document.getElementById('scoreBar').style.background='var(--border)';
+  document.getElementById('vectorVal').textContent='CVSS:3.1/AV:?/AC:?/PR:?/UI:?/S:?/C:?/I:?/A:?';
+  document.getElementById('brkExpl').textContent='—';
+  document.getElementById('brkImpact').textContent='—';
+  document.getElementById('brkScope').textContent='—';
+}
+
+function roundUp(x) { return Math.ceil(x * 10) / 10; }
+
+function calc() {
+  const m = sel_vals;
+  const needed = ['AV','AC','PR','UI','S','C','I','A'];
+  if(!needed.every(k => m[k])) {
+    const done = needed.filter(k=>m[k]).length;
+    document.getElementById('scoreLabel').textContent = `${done}/8 metrics selected`;
+    const v = needed.map(k=>m[k]?`${k}:${m[k]}`:`${k}:?`).join('/');
+    document.getElementById('vectorVal').textContent = 'CVSS:3.1/' + v;
+    return;
+  }
+
+  const scope_changed = m.S === 'C';
+  const AV = W.AV[m.AV], AC = W.AC[m.AC];
+  const PR = scope_changed ? W.PR_C[m.PR] : W.PR_U[m.PR];
+  const UI = W.UI[m.UI];
+  const C = W.C[m.C], I = W.I[m.I], A = W.A[m.A];
+
+  const ISCBase = 1 - (1-C)*(1-I)*(1-A);
+  const ISC = scope_changed ? 7.52*(ISCBase-0.029) - 3.25*Math.pow(ISCBase-0.02, 15) : 6.42*ISCBase;
+  const Exploitability = 8.22 * AV * AC * PR * UI;
+
+  let score;
+  if(ISC <= 0) { score = 0; }
+  else if(!scope_changed) { score = roundUp(Math.min(ISC + Exploitability, 10)); }
+  else { score = roundUp(Math.min(1.08 * (ISC + Exploitability), 10)); }
+
+  const rating = score === 0 ? 'None' : score < 4 ? 'Low' : score < 7 ? 'Medium' : score < 9 ? 'High' : 'Critical';
+  const colors = {None:'#9096A2',Low:'#48BB78',Medium:'#F6AD55',High:'#FF991F',Critical:'#DE350B'};
+  const color = colors[rating];
+
+  document.getElementById('scoreNum').textContent = score.toFixed(1);
+  document.getElementById('scoreNum').style.color = color;
+  document.getElementById('scoreLabel').textContent = rating;
+  document.getElementById('scoreRating').textContent = 'CVSS v3.1 Base Score';
+  document.getElementById('scoreBar').style.width = (score/10*100)+'%';
+  document.getElementById('scoreBar').style.background = color;
+  document.getElementById('vectorVal').textContent = `CVSS:3.1/AV:${m.AV}/AC:${m.AC}/PR:${m.PR}/UI:${m.UI}/S:${m.S}/C:${m.C}/I:${m.I}/A:${m.A}`;
+  document.getElementById('brkExpl').textContent = Exploitability.toFixed(2);
+  document.getElementById('brkImpact').textContent = Math.max(0,ISC).toFixed(2);
+  document.getElementById('brkScope').textContent = scope_changed ? 'Changed' : 'Unchanged';
+}
+
+document.getElementById('vectorString').addEventListener('click', () => {
+  const v = document.getElementById('vectorVal').textContent;
+  navigator.clipboard.writeText(v).then(() => {
+    const el = document.getElementById('vectorVal');
+    const orig = el.textContent;
+    el.textContent = 'Copied!';
+    setTimeout(() => el.textContent = orig, 1000);
+  });
+});
+</script>
+</body>
+</html>

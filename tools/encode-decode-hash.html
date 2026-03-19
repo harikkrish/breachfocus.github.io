@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encode / Decode / Hash — BreachFocus Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF8;--bg-card:#fff;--text:#1A1D23;--text-s:#5A5F6B;--text-m:#9096A2;--accent:#0066FF;--al:#E8F0FF;--ad:#0047B3;--green:#00875A;--gl:#E3FCEF;--red:#DE350B;--rl:#FFEBE6;--amber:#FF991F;--aml:#FFF7E6;--border:rgba(0,0,0,.08);--bs:rgba(0,0,0,.15);--r:12px;--rs:8px;--rx:6px;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;--dsp:'Fraunces',Georgia,serif;--mw:1100px;--nh:64px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nh);background:rgba(250,250,248,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--mw);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--mono);font-weight:700;font-size:12px}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-s);text-decoration:none;padding:7px 14px;border-radius:var(--rx);border:1px solid var(--border);transition:all .2s}
+.nav-back:hover{color:var(--text);border-color:var(--bs)}
+.hero{padding:calc(var(--nh)+48px) 2rem 36px;max-width:var(--mw);margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:var(--aml);color:var(--amber);font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:var(--dsp);font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.hero p{font-size:16px;color:var(--text-s);max-width:640px}
+.body{max-width:var(--mw);margin:0 auto;padding:0 2rem 80px}
+.tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:var(--rx);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-s);transition:all .2s}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.panel{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.pt{font-size:13px;font-weight:600}
+.pb{padding:16px 18px}
+textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;font-family:var(--mono);background:#0C1117;color:#E2E8F0;outline:none;transition:border-color .2s;resize:vertical}
+textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:rgba(255,255,255,.25)}
+.btn-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{padding:9px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s}
+.btn:hover{background:var(--ad)}
+.btn.secondary{background:var(--bg);color:var(--text-s);border:1.5px solid var(--border)}
+.btn.secondary:hover{color:var(--text);border-color:var(--bs)}
+.btn.copy-btn{background:var(--gl);color:var(--green);border:none}
+.btn.copy-btn:hover{background:#C6F6D5}
+.output-area{position:relative;margin-top:10px}
+.output-area textarea{background:#0C1117;color:#86EFAC}
+.copy-overlay{position:absolute;top:8px;right:8px}
+.hash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.hash-row{background:#0C1117;border-radius:var(--rs);padding:12px 14px}
+.hash-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-m);margin-bottom:6px}
+.hash-val{font-family:var(--mono);font-size:12px;color:#86EFAC;word-break:break-all}
+.error{background:var(--rl);border-radius:var(--rs);padding:10px 14px;color:var(--red);font-size:13px;margin-top:8px}
+.url-comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:700px){.hash-grid{grid-template-columns:1fr}.url-comparison{grid-template-columns:1fr}.hero,.body{padding-left:1rem;padding-right:1rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo"><div class="logo-icon">BF</div>BreachFocus</a>
+  <a href="index.html" class="nav-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>All tools</a>
+</div></nav>
+<div class="hero">
+  <div class="badge">⚡ Quick Tools</div>
+  <h1>Encode / Decode / Hash</h1>
+  <p>Base64, URL encoding, Hex, HTML entities, and cryptographic hashing (MD5, SHA-1, SHA-256, SHA-512) — all client-side, nothing leaves your browser.</p>
+</div>
+<div class="body">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('base64')">Base64</button>
+    <button class="tab" onclick="switchTab('url')">URL Encode</button>
+    <button class="tab" onclick="switchTab('hex')">Hex</button>
+    <button class="tab" onclick="switchTab('html')">HTML Entities</button>
+    <button class="tab" onclick="switchTab('hash')">Hash (SHA/MD5)</button>
+  </div>
+
+  <!-- BASE64 -->
+  <div class="tab-content active" id="tab-base64">
+    <div class="panel">
+      <div class="ph"><div class="pt">Base64 Encode / Decode</div></div>
+      <div class="pb">
+        <textarea id="b64in" rows="5" placeholder="Enter text or Base64 string…" oninput="b64auto()"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="b64enc()">Encode →</button>
+          <button class="btn secondary" onclick="b64dec()">← Decode</button>
+          <button class="btn secondary" onclick="b64clear()">Clear</button>
+        </div>
+        <div id="b64err"></div>
+        <div class="output-area">
+          <textarea id="b64out" rows="5" placeholder="Output will appear here…" readonly></textarea>
+          <div class="copy-overlay"><button class="btn copy-btn" onclick="copyEl('b64out')">Copy</button></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-m);margin-top:8px">💡 Tip: paste a JWT, HTTP Basic Auth header, or cookie value to quickly decode it.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- URL ENCODE -->
+  <div class="tab-content" id="tab-url">
+    <div class="panel">
+      <div class="ph"><div class="pt">URL Encode / Decode</div></div>
+      <div class="pb">
+        <textarea id="urlin" rows="5" placeholder="https://example.com/search?q=hello world&type=news" oninput="urlAuto()"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="urlEnc()">Encode →</button>
+          <button class="btn secondary" onclick="urlDec()">← Decode</button>
+          <button class="btn secondary" onclick="document.getElementById('urlin').value='';document.getElementById('urlout').value='';document.getElementById('urlerr').innerHTML=''">Clear</button>
+        </div>
+        <div id="urlerr"></div>
+        <div class="url-comparison">
+          <div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text-m)">COMPONENT encode (encodeURIComponent)</div>
+            <textarea id="urlout" rows="5" readonly placeholder="Encodes everything including &, =, ?, /"></textarea>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text-m)">FULL URL encode (encodeURI)</div>
+            <textarea id="urlout2" rows="5" readonly placeholder="Preserves URL structure chars"></textarea>
+          </div>
+        </div>
+        <div class="btn-row"><button class="btn copy-btn" onclick="copyEl('urlout')">Copy component</button><button class="btn copy-btn" onclick="copyEl('urlout2')">Copy full URL</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEX -->
+  <div class="tab-content" id="tab-hex">
+    <div class="panel">
+      <div class="ph"><div class="pt">Hex Encode / Decode</div></div>
+      <div class="pb">
+        <textarea id="hexin" rows="5" placeholder="Enter text or hex string (e.g. 48656c6c6f)…"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="hexEnc()">Text → Hex</button>
+          <button class="btn secondary" onclick="hexDec()">Hex → Text</button>
+          <button class="btn secondary" onclick="document.getElementById('hexin').value='';document.getElementById('hexout').value='';document.getElementById('hexerr').innerHTML=''">Clear</button>
+        </div>
+        <div id="hexerr"></div>
+        <div class="output-area">
+          <textarea id="hexout" rows="5" readonly placeholder="Output…"></textarea>
+          <div class="copy-overlay"><button class="btn copy-btn" onclick="copyEl('hexout')">Copy</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTML ENTITIES -->
+  <div class="tab-content" id="tab-html">
+    <div class="panel">
+      <div class="ph"><div class="pt">HTML Entity Encode / Decode</div></div>
+      <div class="pb">
+        <textarea id="htmlin" rows="5" placeholder="&lt;script&gt;alert('xss')&lt;/script&gt;"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="htmlEnc()">Encode →</button>
+          <button class="btn secondary" onclick="htmlDec()">← Decode</button>
+          <button class="btn secondary" onclick="document.getElementById('htmlin').value='';document.getElementById('htmlout').value=''">Clear</button>
+        </div>
+        <div class="output-area">
+          <textarea id="htmlout" rows="5" readonly placeholder="Output…"></textarea>
+          <div class="copy-overlay"><button class="btn copy-btn" onclick="copyEl('htmlout')">Copy</button></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-m);margin-top:8px">💡 Use for XSS payload analysis and sanitization testing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HASH -->
+  <div class="tab-content" id="tab-hash">
+    <div class="panel">
+      <div class="ph"><div class="pt">Cryptographic Hash Generator</div></div>
+      <div class="pb">
+        <textarea id="hashin" rows="4" placeholder="Enter text to hash…"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="hashAll()">Hash all</button>
+          <button class="btn secondary" onclick="document.getElementById('hashin').value='';document.getElementById('hashout').innerHTML=''">Clear</button>
+        </div>
+        <div id="hashout" class="hash-grid" style="margin-top:12px"></div>
+        <div style="font-size:12px;color:var(--text-m);margin-top:12px">⚠ MD5 and SHA-1 are cryptographically broken — use SHA-256+ for security purposes.</div>
+      </div>
+    </div>
+
+    <!-- File hash -->
+    <div class="panel">
+      <div class="ph"><div class="pt">File Hash (drag &amp; drop)</div><span style="font-size:12px;color:var(--text-m)">nothing uploaded — computed locally</span></div>
+      <div class="pb">
+        <div id="fileDropZone" style="border:2px dashed var(--border);border-radius:var(--rs);padding:28px;text-align:center;cursor:pointer;transition:all .2s;color:var(--text-m);font-size:14px"
+          ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="fileDrop(event)"
+          onclick="document.getElementById('fileHashInput').click()">
+          Drop any file here or click to browse
+          <input type="file" id="fileHashInput" style="display:none" onchange="hashFile(this.files[0])">
+        </div>
+        <div id="fileHashOut" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(t) {
+  document.querySelectorAll('.tab,.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${t}')"]`).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+// BASE64
+function b64enc(){ try{ document.getElementById('b64out').value=btoa(unescape(encodeURIComponent(document.getElementById('b64in').value)));document.getElementById('b64err').innerHTML=''; }catch(e){document.getElementById('b64err').innerHTML=`<div class="error">${e.message}</div>`;} }
+function b64dec(){ try{ document.getElementById('b64out').value=decodeURIComponent(escape(atob(document.getElementById('b64in').value.trim())));document.getElementById('b64err').innerHTML=''; }catch(e){document.getElementById('b64err').innerHTML=`<div class="error">Invalid Base64: ${e.message}</div>`;} }
+function b64clear(){ document.getElementById('b64in').value='';document.getElementById('b64out').value='';document.getElementById('b64err').innerHTML=''; }
+function b64auto(){ const v=document.getElementById('b64in').value.trim(); if(/^[A-Za-z0-9+/=]+$/.test(v)&&v.length%4===0&&v.length>4) try{const d=atob(v);if(d.split('').every(c=>c.charCodeAt(0)>=32||c==='\n'||c==='\t')){document.getElementById('b64out').value=decodeURIComponent(escape(d));}} catch(e){} }
+
+// URL
+function urlEnc(){ const v=document.getElementById('urlin').value; document.getElementById('urlout').value=encodeURIComponent(v); document.getElementById('urlout2').value=encodeURI(v); document.getElementById('urlerr').innerHTML=''; }
+function urlDec(){ try{ document.getElementById('urlout').value=decodeURIComponent(document.getElementById('urlin').value); document.getElementById('urlout2').value=decodeURI(document.getElementById('urlin').value); document.getElementById('urlerr').innerHTML=''; }catch(e){document.getElementById('urlerr').innerHTML=`<div class="error">${e.message}</div>`;} }
+function urlAuto(){ const v=document.getElementById('urlin').value; if(v.includes('%')){try{document.getElementById('urlout').value=decodeURIComponent(v);}catch(e){}} }
+
+// HEX
+function hexEnc(){ const v=document.getElementById('hexin').value; document.getElementById('hexout').value=Array.from(new TextEncoder().encode(v)).map(b=>b.toString(16).padStart(2,'0')).join(''); document.getElementById('hexerr').innerHTML=''; }
+function hexDec(){ try{ const v=document.getElementById('hexin').value.replace(/\s+/g,'').replace(/^0x/i,''); if(v.length%2!==0){throw new Error('Odd number of hex characters');} const bytes=v.match(/.{2}/g).map(h=>parseInt(h,16)); document.getElementById('hexout').value=new TextDecoder().decode(new Uint8Array(bytes)); document.getElementById('hexerr').innerHTML=''; }catch(e){document.getElementById('hexerr').innerHTML=`<div class="error">${e.message}</div>`;} }
+
+// HTML
+function htmlEnc(){ document.getElementById('htmlout').value=document.getElementById('htmlin').value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+function htmlDec(){ const el=document.createElement('textarea'); el.innerHTML=document.getElementById('htmlin').value; document.getElementById('htmlout').value=el.value; }
+
+// HASH
+async function hashAll(){
+  const text=document.getElementById('hashin').value;
+  if(!text) return;
+  const enc=new TextEncoder().encode(text);
+  const algos=[['MD5',md5(text)],['SHA-1','SHA-1'],['SHA-256','SHA-256'],['SHA-512','SHA-512']];
+  const results={MD5:md5(text)};
+  for(const a of['SHA-1','SHA-256','SHA-512']){
+    const h=await crypto.subtle.digest(a,enc);
+    results[a]=Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  document.getElementById('hashout').innerHTML=Object.entries(results).map(([k,v])=>`
+    <div class="hash-row">
+      <div class="hash-label">${k}</div>
+      <div class="hash-val" style="cursor:pointer" onclick="navigator.clipboard.writeText('${v}')" title="Click to copy">${v}</div>
+    </div>`).join('');
+}
+
+async function hashFile(file){
+  if(!file) return;
+  const buf=await file.arrayBuffer();
+  const text=new TextDecoder('utf-8',{fatal:false}).decode(new Uint8Array(buf).slice(0,100));
+  const results={MD5:md5(text)}; // MD5 of preview only for large files
+  for(const a of['SHA-1','SHA-256','SHA-512']){
+    const h=await crypto.subtle.digest(a,buf);
+    results[a]=Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  document.getElementById('fileDropZone').textContent=`📄 ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  document.getElementById('fileHashOut').innerHTML='<div class="hash-grid">'+Object.entries(results).filter(([k])=>k!=='MD5').map(([k,v])=>`
+    <div class="hash-row">
+      <div class="hash-label">${k}</div>
+      <div class="hash-val" style="cursor:pointer" onclick="navigator.clipboard.writeText('${v}')" title="Click to copy">${v}</div>
+    </div>`).join('')+'</div><div style="font-size:12px;color:var(--text-m);margin-top:8px">Click any hash to copy. Computed entirely in your browser.</div>';
+}
+function fileDrop(e){ e.preventDefault(); document.getElementById('fileDropZone').style.borderColor=''; const f=e.dataTransfer.files[0]; if(f) hashFile(f); }
+
+function copyEl(id){ const el=document.getElementById(id); navigator.clipboard.writeText(el.value).then(()=>{ const orig=el.style.borderColor; el.style.borderColor='var(--green)'; setTimeout(()=>el.style.borderColor=orig,800); }); }
+
+// Tiny MD5 implementation
+function md5(s){function L(k,d){return(k<<d)|(k>>>(32-d))}function K(G,k){var I,d,F,H,x;F=G&2147483648;H=k&2147483648;I=G&1073741824;d=k&1073741824;x=(G&1073741823)+(k&1073741823);if(I&d){return x^2147483648^F^H}if(I|d){if(x&1073741824){return x^3221225472^F^H}else{return x^1073741824^F^H}}else{return x^F^H}}function r(a,F,t,g,e,Z,y){a=K(a,K(K(F&t|~F&g,e),K(Z,y)));return K(L(a,Z>>>8&255),F)}function q(a,F,t,g,e,Z,y){a=K(a,K(K(F&g|t&~g,e),K(Z,y)));return K(L(a,Z>>>8&255),F)}function p(a,F,t,g,e,Z,y){a=K(a,K(K(F^t^g,e),K(Z,y)));return K(L(a,Z>>>8&255),F)}function n(a,F,t,g,e,Z,y){a=K(a,K(K(t^(F|~g),e),K(Z,y)));return K(L(a,Z>>>8&255),F)}function u(G){var z='',F='',m,n;for(n=0;n<=3;n++){m=G>>>(n*8)&255;F='0'+m.toString(16);z+=F.slice(-2)}return z}var m=[],_,F,G,H,a,b,c,d,e=s.length;var k=e+8;var I=((k-k%64)/64+1)*16;var r2=new Array(I+16);for(m=0;m<I+16;m++)r2[m]=0;for(m=0;m<e;m++)r2[m>>2]|=s.charCodeAt(m)<<((m%4)*8);r2[m>>2]|=128<<((m%4)*8);r2[I-2]=e*8;a=1732584193;b=4023233417;c=2562383102;d=271733878;for(m=0;m<I;m+=16){F=a;G=b;H=c;_=d;a=r(a,b,c,d,r2[m+0],7+25*16,-680876936);d=r(d,a,b,c,r2[m+1],12+25*16,-389564586);c=r(c,d,a,b,r2[m+2],17+25*16,606105819);b=r(b,c,d,a,r2[m+3],22+25*16,-1044525330);a=r(a,b,c,d,r2[m+4],7+25*16,-176418897);d=r(d,a,b,c,r2[m+5],12+25*16,1200080426);c=r(c,d,a,b,r2[m+6],17+25*16,-1473231341);b=r(b,c,d,a,r2[m+7],22+25*16,-45705983);a=r(a,b,c,d,r2[m+8],7+25*16,1770035416);d=r(d,a,b,c,r2[m+9],12+25*16,-1958414417);c=r(c,d,a,b,r2[m+10],17+25*16,-42063);b=r(b,c,d,a,r2[m+11],22+25*16,-1990404162);a=r(a,b,c,d,r2[m+12],7+25*16,1804603682);d=r(d,a,b,c,r2[m+13],12+25*16,-40341101);c=r(c,d,a,b,r2[m+14],17+25*16,-1502002290);b=r(b,c,d,a,r2[m+15],22+25*16,1236535329);a=q(a,b,c,d,r2[m+1],5+25*32,-165796510);d=q(d,a,b,c,r2[m+6],9+25*32,-1069501632);c=q(c,d,a,b,r2[m+11],14+25*32,643717713);b=q(b,c,d,a,r2[m+0],20+25*32,-373897302);a=q(a,b,c,d,r2[m+5],5+25*32,-701558691);d=q(d,a,b,c,r2[m+10],9+25*32,38016083);c=q(c,d,a,b,r2[m+15],14+25*32,-660478335);b=q(b,c,d,a,r2[m+4],20+25*32,-405537848);a=q(a,b,c,d,r2[m+9],5+25*32,568446438);d=q(d,a,b,c,r2[m+14],9+25*32,-1019803690);c=q(c,d,a,b,r2[m+3],14+25*32,-187363961);b=q(b,c,d,a,r2[m+8],20+25*32,1163531501);a=q(a,b,c,d,r2[m+13],5+25*32,-1444681467);d=q(d,a,b,c,r2[m+2],9+25*32,-51403784);c=q(c,d,a,b,r2[m+7],14+25*32,1735328473);b=q(b,c,d,a,r2[m+12],20+25*32,-1926607734);a=p(a,b,c,d,r2[m+5],4+25*48,-378558);d=p(d,a,b,c,r2[m+8],11+25*48,-2022574463);c=p(c,d,a,b,r2[m+11],16+25*48,1839030562);b=p(b,c,d,a,r2[m+14],23+25*48,-35309556);a=p(a,b,c,d,r2[m+1],4+25*48,-1530992060);d=p(d,a,b,c,r2[m+4],11+25*48,1272893353);c=p(c,d,a,b,r2[m+7],16+25*48,-155497632);b=p(b,c,d,a,r2[m+10],23+25*48,-1094730640);a=p(a,b,c,d,r2[m+13],4+25*48,681279174);d=p(d,a,b,c,r2[m+0],11+25*48,-358537222);c=p(c,d,a,b,r2[m+3],16+25*48,-722521979);b=p(b,c,d,a,r2[m+6],23+25*48,76029189);a=p(a,b,c,d,r2[m+9],4+25*48,-640364487);d=p(d,a,b,c,r2[m+12],11+25*48,-421815835);c=p(c,d,a,b,r2[m+15],16+25*48,530742520);b=p(b,c,d,a,r2[m+2],23+25*48,-995338651);a=n(a,b,c,d,r2[m+0],6+25*64,-198630844);d=n(d,a,b,c,r2[m+7],10+25*64,1126891415);c=n(c,d,a,b,r2[m+14],15+25*64,-1416354905);b=n(b,c,d,a,r2[m+5],21+25*64,-57434055);a=n(a,b,c,d,r2[m+12],6+25*64,1700485571);d=n(d,a,b,c,r2[m+3],10+25*64,-1894986606);c=n(c,d,a,b,r2[m+10],15+25*64,-1051523);b=n(b,c,d,a,r2[m+1],21+25*64,-2054922799);a=n(a,b,c,d,r2[m+8],6+25*64,1873313359);d=n(d,a,b,c,r2[m+15],10+25*64,-30611744);c=n(c,d,a,b,r2[m+6],15+25*64,-1560198380);b=n(b,c,d,a,r2[m+13],21+25*64,1309151649);a=n(a,b,c,d,r2[m+4],6+25*64,-145523070);d=n(d,a,b,c,r2[m+11],10+25*64,-1120210379);c=n(c,d,a,b,r2[m+2],15+25*64,718787259);b=n(b,c,d,a,r2[m+9],21+25*64,-343485551);a=K(a,F);b=K(b,G);c=K(c,H);d=K(d,_)}return(u(a)+u(b)+u(c)+u(d)).toLowerCase()}
+</script>
+</body>
+</html>
