@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IAM Policy Analyzer — BreachFocus Tools</title>
+<meta name="description" content="Analyze AWS IAM policies for overly permissive rules, wildcards, and security misconfigurations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF8; --bg-card: #FFFFFF; --bg-dark: #0C1117; --bg-dark-card: #151C25;
+  --text: #1A1D23; --text-secondary: #5A5F6B; --text-muted: #9096A2;
+  --accent: #0066FF; --accent-light: #E8F0FF; --accent-dark: #0047B3;
+  --green: #00875A; --green-light: #E3FCEF;
+  --red: #DE350B; --red-light: #FFEBE6;
+  --amber: #FF991F; --amber-light: #FFF7E6;
+  --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.15);
+  --radius: 12px; --radius-sm: 8px; --radius-xs: 6px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
+  --font: 'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-display: 'Fraunces',Georgia,serif;
+  --font-mono: 'JetBrains Mono','SF Mono',monospace;
+  --max-w: 1200px; --header-h: 72px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);background:rgba(250,250,248,0.9);backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid var(--border);transition:box-shadow 0.3s;}
+.nav.scrolled{box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+.nav-inner{max-width:var(--max-w);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;color:var(--text);text-decoration:none;}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:white;font-family:var(--font-mono);font-weight:700;font-size:14px;letter-spacing:-0.5px;}
+.nav-links{display:flex;gap:2px;align-items:center;}
+.nav-links a{padding:8px 16px;border-radius:var(--radius-xs);font-size:14px;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:all 0.2s;}
+.nav-links a:hover{background:rgba(0,0,0,0.04);color:var(--text);}
+.nav-links a.active{color:var(--accent);background:var(--accent-light);}
+.nav-cta{padding:8px 20px !important;background:var(--text) !important;color:white !important;border-radius:var(--radius-sm) !important;}
+.nav-cta:hover{opacity:0.88 !important;}
+.mobile-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:color 0.2s;}
+.back-link:hover{color:var(--accent);}
+.back-link svg{transition:transform 0.2s;}
+.back-link:hover svg{transform:translateX(-3px);}
+
+/* PAGE HEADER */
+.page-header{padding:calc(var(--header-h) + 48px) 2rem 48px;max-width:var(--max-w);margin:0 auto;}
+.page-header .breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:13px;color:var(--text-muted);font-family:var(--font-mono);}
+.page-header .breadcrumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.page-header .breadcrumb a:hover{color:var(--accent);}
+.page-header .breadcrumb span{color:var(--border-strong);}
+.tool-label{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px;}
+.tool-label::before{content:'';width:16px;height:2px;background:var(--accent);border-radius:1px;}
+.page-header h1{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:-0.02em;margin-bottom:12px;line-height:1.2;}
+.page-header p{font-size:16px;color:var(--text-secondary);max-width:600px;line-height:1.7;}
+.tool-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.meta-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;background:var(--bg-card);border:1px solid var(--border);}
+.meta-badge.client{color:var(--green);background:var(--green-light);}
+.meta-badge.cloud{color:var(--accent);background:var(--accent-light);}
+
+/* MAIN LAYOUT */
+.tool-layout{max-width:var(--max-w);margin:0 auto;padding:0 2rem 80px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+
+/* EDITOR PANEL */
+.panel{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.02);}
+.panel-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;}
+.panel-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.panel-actions{display:flex;gap:8px;}
+.btn-sm{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius-xs);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.2s;}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border-strong);color:var(--text);}
+.btn-danger{background:var(--red-light);color:var(--red);border:1.5px solid rgba(222,53,11,0.15);}
+.btn-danger:hover{background:var(--red);color:white;}
+
+/* EDITOR */
+.editor-wrap{position:relative;}
+.editor-wrap textarea{width:100%;min-height:420px;padding:20px;font-family:var(--font-mono);font-size:13px;line-height:1.8;color:#E2E8F0;background:var(--bg-dark);border:none;resize:vertical;outline:none;tab-size:2;}
+.editor-wrap textarea::placeholder{color:rgba(255,255,255,0.2);}
+.editor-footer{padding:12px 20px;background:var(--bg-dark);border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.editor-status{font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,0.3);}
+.analyze-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.analyze-btn:hover{background:var(--accent-dark);}
+.analyze-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.analyze-btn .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.analyze-btn.loading .spinner{display:block;}
+.analyze-btn.loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* RESULTS */
+.results-panel{display:flex;flex-direction:column;gap:0;}
+.results-empty{padding:60px 24px;text-align:center;color:var(--text-muted);}
+.results-empty svg{opacity:0.3;margin-bottom:16px;}
+.results-empty p{font-size:14px;line-height:1.6;}
+
+/* SCORE */
+.score-card{padding:24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;}
+.score-ring{position:relative;width:72px;height:72px;flex-shrink:0;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring .score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:18px;font-weight:700;}
+.score-info h3{font-size:17px;font-weight:600;margin-bottom:4px;}
+.score-info p{font-size:13px;color:var(--text-secondary);}
+.risk-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;margin-top:8px;}
+.risk-critical{background:var(--red-light);color:var(--red);}
+.risk-high{background:#FFF3E0;color:#E65100;}
+.risk-medium{background:var(--amber-light);color:var(--amber);}
+.risk-low{background:var(--green-light);color:var(--green);}
+.risk-clean{background:var(--green-light);color:var(--green);}
+
+/* FINDINGS */
+.findings-list{padding:16px;}
+.finding-item{border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;transition:all 0.2s;}
+.finding-item:last-child{margin-bottom:0;}
+.finding-header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;}
+.finding-header:hover{background:rgba(0,0,0,0.02);}
+.sev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.sev-critical{background:var(--red);}
+.sev-high{background:#E65100;}
+.sev-medium{background:var(--amber);}
+.sev-low{background:var(--green);}
+.sev-info{background:var(--accent);}
+.finding-title{flex:1;font-size:14px;font-weight:600;line-height:1.4;}
+.finding-sev-label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;flex-shrink:0;}
+.sev-label-critical{background:var(--red-light);color:var(--red);}
+.sev-label-high{background:#FFF3E0;color:#E65100;}
+.sev-label-medium{background:var(--amber-light);color:var(--amber);}
+.sev-label-low{background:var(--green-light);color:var(--green);}
+.sev-label-info{background:var(--accent-light);color:var(--accent);}
+.finding-chevron{color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;margin-top:2px;}
+.finding-item.open .finding-chevron{transform:rotate(90deg);}
+.finding-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,0.01);}
+.finding-item.open .finding-body{display:block;}
+.finding-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-top:12px;margin-bottom:12px;}
+.finding-location{font-family:var(--font-mono);font-size:12px;padding:8px 12px;background:var(--bg-dark);color:rgba(255,255,255,0.6);border-radius:var(--radius-xs);margin-bottom:10px;word-break:break-all;}
+.finding-rec{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--green);background:var(--green-light);padding:10px 12px;border-radius:var(--radius-xs);}
+.finding-rec svg{flex-shrink:0;margin-top:1px;}
+
+/* SUMMARY STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.stat-cell{background:var(--bg-card);padding:14px 16px;text-align:center;}
+.stat-cell .s-num{font-family:var(--font-mono);font-size:18px;font-weight:700;}
+.stat-cell .s-label{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.s-num.c{color:var(--red);}
+.s-num.h{color:#E65100;}
+.s-num.m{color:var(--amber);}
+.s-num.l{color:var(--green);}
+
+/* SAMPLES */
+.samples-bar{padding:12px 20px;background:rgba(0,0,0,0.02);border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.samples-label{font-size:12px;color:var(--text-muted);font-weight:600;}
+.sample-chip{font-size:12px;padding:4px 10px;border-radius:var(--radius-xs);background:var(--bg-card);border:1px solid var(--border);cursor:pointer;color:var(--text-secondary);transition:all 0.2s;font-family:var(--font-mono);}
+.sample-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+
+/* FOOTER */
+.footer{padding:40px 2rem;border-top:1px solid var(--border);}
+.footer-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-copy{font-size:13px;color:var(--text-muted);}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--text);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .tool-layout{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .mobile-toggle{display:block;}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:var(--header-h);left:0;right:0;background:rgba(250,250,248,0.98);backdrop-filter:blur(20px);padding:16px;border-bottom:1px solid var(--border);}
+}
+@media(max-width:600px){
+  .page-header{padding:calc(var(--header-h)+32px) 1.25rem 32px;}
+  .tool-layout{padding:0 1.25rem 60px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .nav-inner{padding:0 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-icon">BF</div>
+      BreachFocus
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#skills">Skills</a>
+      <a href="../index.html#projects">Projects</a>
+      <a href="index.html" class="active">Tools</a>
+      <a href="../index.html#contact" class="nav-cta">Get in touch</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="../index.html">breachfocus</a>
+    <span>/</span>
+    <a href="index.html">tools</a>
+    <span>/</span>
+    <span>iam-analyzer</span>
+  </div>
+  <div class="tool-label">Cloud &amp; Config</div>
+  <h1>AWS IAM Policy Analyzer</h1>
+  <p>Paste any IAM policy JSON to scan for overly permissive rules, dangerous wildcards, privilege escalation paths, and security misconfigurations.</p>
+  <div class="tool-meta">
+    <span class="meta-badge client">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Client-side only
+    </span>
+    <span class="meta-badge cloud">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      AWS IAM
+    </span>
+  </div>
+</div>
+
+<div class="tool-layout">
+  <!-- INPUT PANEL -->
+  <div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <div class="panel-icon" style="background:var(--accent-light);color:var(--accent);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          Policy JSON
+        </div>
+        <div class="panel-actions">
+          <button class="btn-sm btn-ghost" onclick="clearEditor()">Clear</button>
+        </div>
+      </div>
+      <div class="editor-wrap">
+        <textarea id="policyInput" spellcheck="false" placeholder='{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+    }
+  ]
+}'></textarea>
+        <div class="editor-footer">
+          <span class="editor-status" id="editorStatus">Ready — paste or load a sample</span>
+        </div>
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyzePolicy()">
+        <span class="btn-text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Analyze Policy
+        </span>
+        <span class="spinner"></span>
+      </button>
+      <div class="samples-bar">
+        <span class="samples-label">Load sample:</span>
+        <span class="sample-chip" onclick="loadSample('admin')">Admin Wildcard</span>
+        <span class="sample-chip" onclick="loadSample('s3')">S3 Public Read</span>
+        <span class="sample-chip" onclick="loadSample('least')">Least Privilege</span>
+        <span class="sample-chip" onclick="loadSample('escalation')">Priv Escalation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div>
+    <div class="panel results-panel" id="resultsPanel">
+      <div class="results-empty" id="resultsEmpty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <p>Paste an IAM policy JSON and click<br><strong>Analyze Policy</strong> to see findings.</p>
+      </div>
+      <div id="resultsContent" style="display:none;">
+        <div class="score-card" id="scoreCard"></div>
+        <div class="stats-row" id="statsRow"></div>
+        <div class="findings-list" id="findingsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-copy">&copy; 2026 BreachFocus. All tools run client-side — no data is sent to any server.</div>
+    <div class="footer-links">
+      <a href="index.html">All Tools</a>
+      <a href="../index.html">Home</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const SAMPLES = {
+  admin: {
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Sid": "FullAdmin",
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+    }]
+  },
+  s3: {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "PublicReadGetObject",
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": ["s3:GetObject","s3:ListBucket","s3:GetBucketAcl"],
+        "Resource": ["arn:aws:s3:::my-bucket","arn:aws:s3:::my-bucket/*"],
+        "Condition": {}
+      },
+      {
+        "Sid": "AdminWrite",
+        "Effect": "Allow",
+        "Action": "s3:*",
+        "Resource": "*"
+      }
+    ]
+  },
+  least: {
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Sid": "ReadOnlyEC2",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeImages",
+        "ec2:DescribeSecurityGroups"
+      ],
+      "Resource": "arn:aws:ec2:us-east-1:123456789012:instance/i-0abcd1234efgh5678"
+    }]
+  },
+  escalation: {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "iam:CreatePolicyVersion",
+          "iam:AttachUserPolicy",
+          "iam:PutUserPolicy",
+          "iam:CreateAccessKey",
+          "sts:AssumeRole",
+          "lambda:CreateFunction",
+          "lambda:InvokeFunction"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": "iam:PassRole",
+        "Resource": "*"
+      }
+    ]
+  }
+};
+
+function loadSample(name) {
+  document.getElementById('policyInput').value = JSON.stringify(SAMPLES[name], null, 2);
+  updateStatus();
+}
+
+function clearEditor() {
+  document.getElementById('policyInput').value = '';
+  document.getElementById('editorStatus').textContent = 'Ready — paste or load a sample';
+  document.getElementById('resultsEmpty').style.display = '';
+  document.getElementById('resultsContent').style.display = 'none';
+}
+
+function updateStatus() {
+  const val = document.getElementById('policyInput').value;
+  const lines = val.split('\n').length;
+  const chars = val.length;
+  document.getElementById('editorStatus').textContent = `${lines} lines · ${chars} chars`;
+}
+
+document.getElementById('policyInput').addEventListener('input', updateStatus);
+
+// ---- ANALYSIS ENGINE ----
+const DANGEROUS_ACTIONS = {
+  'iam:*': { sev: 'critical', msg: 'Full IAM access allows creating users, roles, and policies — effectively a full account takeover.' },
+  '*': { sev: 'critical', msg: 'Wildcard action grants access to every AWS service and operation.' },
+  'iam:CreatePolicyVersion': { sev: 'critical', msg: 'Allows overwriting existing policies, enabling privilege escalation.' },
+  'iam:AttachUserPolicy': { sev: 'critical', msg: 'Allows attaching any policy to any user, including AdministratorAccess.' },
+  'iam:PutUserPolicy': { sev: 'critical', msg: 'Allows creating inline policies on users — common escalation path.' },
+  'iam:CreateAccessKey': { sev: 'high', msg: 'Can create long-lived credentials for any IAM user.' },
+  'iam:PassRole': { sev: 'high', msg: 'Allows passing roles to services, enabling escalation if combined with service permissions.' },
+  'sts:AssumeRole': { sev: 'high', msg: 'Broad assume-role rights may allow moving to higher-privileged roles.' },
+  'lambda:CreateFunction': { sev: 'high', msg: 'Combined with iam:PassRole, allows executing code with elevated permissions.' },
+  's3:*': { sev: 'high', msg: 'Full S3 access on all resources risks data exfiltration and destruction.' },
+  'ec2:*': { sev: 'medium', msg: 'Full EC2 access allows instance launch, networking changes, and snapshot access.' },
+  'kms:*': { sev: 'high', msg: 'Full KMS access could expose encrypted data across the account.' },
+  'secretsmanager:GetSecretValue': { sev: 'medium', msg: 'Access to secrets — ensure resource is scoped to specific secrets.' },
+  'ssm:GetParameter': { sev: 'low', msg: 'Parameter Store read access — verify no sensitive credentials are stored broadly.' },
+  'cloudtrail:DeleteTrail': { sev: 'critical', msg: 'Allows an attacker to eliminate audit logs after compromise.' },
+  'cloudtrail:StopLogging': { sev: 'critical', msg: 'Disabling CloudTrail is a classic post-compromise cover-up technique.' },
+  'guardduty:DeleteDetector': { sev: 'critical', msg: 'Deleting GuardDuty detectors blinds your threat detection capability.' },
+  'organizations:*': { sev: 'critical', msg: 'Full Organizations access can affect all accounts in the org.' },
+};
+
+const ESCALATION_COMBOS = [
+  {
+    actions: ['iam:CreatePolicyVersion','iam:AttachUserPolicy'],
+    title: 'Policy Manipulation Escalation Path',
+    desc: 'Combination of iam:CreatePolicyVersion and iam:AttachUserPolicy creates a privilege escalation path — attacker can create a new policy version with admin access and attach it.'
+  },
+  {
+    actions: ['lambda:CreateFunction','iam:PassRole'],
+    title: 'Lambda + PassRole Escalation',
+    desc: 'lambda:CreateFunction combined with iam:PassRole allows an attacker to create a Lambda function that assumes a high-privilege role and executes arbitrary code.'
+  },
+  {
+    actions: ['sts:AssumeRole','iam:PassRole'],
+    title: 'Cross-Role Escalation Risk',
+    desc: 'sts:AssumeRole on "*" with iam:PassRole creates broad lateral movement opportunities across roles in the account.'
+  },
+];
+
+function analyzePolicy() {
+  const input = document.getElementById('policyInput').value.trim();
+  const btn = document.getElementById('analyzeBtn');
+
+  if (!input) {
+    document.getElementById('editorStatus').textContent = '⚠ Please paste a policy first';
+    return;
+  }
+
+  let policy;
+  try {
+    policy = JSON.parse(input);
+  } catch(e) {
+    document.getElementById('editorStatus').textContent = '✗ Invalid JSON: ' + e.message;
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const findings = runChecks(policy);
+    renderResults(findings, policy);
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }, 600);
+}
+
+function runChecks(policy) {
+  const findings = [];
+  const statements = policy.Statement || [];
+  const allActions = [];
+
+  statements.forEach((stmt, si) => {
+    const effect = stmt.Effect || 'Allow';
+    const actions = Array.isArray(stmt.Action) ? stmt.Action : [stmt.Action].filter(Boolean);
+    const resources = Array.isArray(stmt.Resource) ? stmt.Resource : [stmt.Resource].filter(Boolean);
+    const principal = stmt.Principal;
+    const hasCondition = stmt.Condition && Object.keys(stmt.Condition).length > 0;
+    const loc = `Statement[${si}]${stmt.Sid ? ` (${stmt.Sid})` : ''}`;
+
+    if (effect !== 'Allow') return;
+
+    allActions.push(...actions);
+
+    // Check wildcard actions
+    actions.forEach(action => {
+      const match = DANGEROUS_ACTIONS[action];
+      if (match) {
+        findings.push({
+          sev: match.sev,
+          title: `Dangerous action: ${action}`,
+          desc: match.msg,
+          location: `${loc} → Action: "${action}"`,
+          rec: getSuggestedFix(action, resources),
+        });
+      }
+    });
+
+    // Wildcard resource check
+    const hasWildcardResource = resources.some(r => r === '*');
+    const hasWildcardAction = actions.some(a => a.includes('*'));
+    if (hasWildcardResource && hasWildcardAction && effect === 'Allow') {
+      findings.push({
+        sev: 'critical',
+        title: 'Wildcard action on wildcard resource',
+        desc: 'Action "*" on Resource "*" is the most permissive IAM statement possible. This is equivalent to root-level access and violates least-privilege principle.',
+        location: `${loc} → Action: "${actions.join(', ')}" on Resource: "*"`,
+        rec: 'Scope actions to specific required operations and replace "*" resource with specific ARNs.',
+      });
+    } else if (hasWildcardResource && !hasWildcardAction) {
+      findings.push({
+        sev: 'medium',
+        title: 'Scoped actions on wildcard resource',
+        desc: 'Actions are restricted but apply to all resources. Scope the Resource to specific ARNs to enforce least privilege.',
+        location: `${loc} → Resource: "*"`,
+        rec: 'Replace Resource: "*" with specific ARNs like arn:aws:s3:::my-bucket/*',
+      });
+    }
+
+    // Public principal
+    if (principal === '*' || (typeof principal === 'object' && (principal.AWS === '*' || principal.Service === '*'))) {
+      findings.push({
+        sev: 'critical',
+        title: 'Public principal (Principal: "*")',
+        desc: 'This policy allows any AWS account, user, or service to perform these actions. This is commonly seen on misconfigured S3 bucket policies and should almost never be used.',
+        location: `${loc} → Principal: "*"`,
+        rec: hasCondition
+          ? 'Principal "*" with conditions may be intentional (e.g., S3 presigned URLs), but verify the condition fully restricts access.'
+          : 'Replace Principal: "*" with specific account ARNs or service principals. Add Condition blocks if broad access is required.',
+      });
+    }
+
+    // Condition-less sensitive actions
+    if (!hasCondition && actions.some(a => ['iam:PassRole','sts:AssumeRole'].includes(a)) && hasWildcardResource) {
+      findings.push({
+        sev: 'high',
+        title: 'Sensitive action without condition constraint',
+        desc: 'Actions like iam:PassRole and sts:AssumeRole are high-risk without conditions limiting which roles can be targeted.',
+        location: `${loc} → Missing Condition block`,
+        rec: 'Add a Condition with iam:PassedToService or aws:PrincipalArn to restrict which roles/services are targeted.',
+      });
+    }
+
+    // NotAction / NotResource (inverse logic)
+    if (stmt.NotAction) {
+      findings.push({
+        sev: 'high',
+        title: 'NotAction used — inverse permission logic',
+        desc: 'NotAction grants all actions EXCEPT those listed. This is rarely intended and commonly grants far broader access than expected.',
+        location: `${loc} → NotAction: ${JSON.stringify(stmt.NotAction)}`,
+        rec: 'Replace NotAction with an explicit list of required actions to ensure least-privilege.',
+      });
+    }
+    if (stmt.NotResource) {
+      findings.push({
+        sev: 'high',
+        title: 'NotResource used — inverse resource logic',
+        desc: 'NotResource applies the statement to all resources EXCEPT those listed. This is a common source of unintended access.',
+        location: `${loc} → NotResource: ${JSON.stringify(stmt.NotResource)}`,
+        rec: 'Replace NotResource with an explicit Resource list.',
+      });
+    }
+  });
+
+  // Escalation combo checks
+  const actionSet = new Set(allActions.map(a => a.toLowerCase()));
+  ESCALATION_COMBOS.forEach(combo => {
+    const matched = combo.actions.filter(a => allActions.some(pa => pa.toLowerCase() === a.toLowerCase() || pa === '*'));
+    if (matched.length >= 2) {
+      findings.push({
+        sev: 'critical',
+        title: combo.title,
+        desc: combo.desc,
+        location: `Policy-wide → Combined actions: ${matched.join(' + ')}`,
+        rec: 'Separate these permissions into different roles/policies with distinct use cases. Apply least-privilege per function.',
+      });
+    }
+  });
+
+  // Missing version
+  if (!policy.Version) {
+    findings.push({
+      sev: 'info',
+      title: 'Missing policy Version field',
+      desc: 'AWS recommends always specifying "Version": "2012-10-17" to use policy variables and ensure consistent parsing.',
+      location: 'Policy root → Missing "Version"',
+      rec: 'Add "Version": "2012-10-17" to the top of your policy document.',
+    });
+  }
+
+  return findings;
+}
+
+function getSuggestedFix(action, resources) {
+  const fixes = {
+    '*': 'Replace Action: "*" with only the specific actions your application requires.',
+    'iam:*': 'Break down IAM permissions to only what is needed: e.g., iam:GetRole, iam:ListRoles.',
+    'iam:CreatePolicyVersion': 'Restrict to specific policy ARNs and add MFA or IP conditions.',
+    's3:*': 'Scope to specific buckets and use actions like s3:GetObject, s3:PutObject only.',
+    'cloudtrail:DeleteTrail': 'This action should almost never be granted. Remove it.',
+    'cloudtrail:StopLogging': 'This action should almost never be granted. Remove it.',
+    'guardduty:DeleteDetector': 'This action should almost never be granted. Remove it.',
+  };
+  return fixes[action] || 'Scope this action to specific resource ARNs and consider adding Condition constraints.';
+}
+
+function severityOrder(s) {
+  return {critical:0,high:1,medium:2,low:3,info:4}[s] ?? 5;
+}
+
+function renderResults(findings, policy) {
+  document.getElementById('resultsEmpty').style.display = 'none';
+  document.getElementById('resultsContent').style.display = '';
+
+  findings.sort((a,b) => severityOrder(a.sev) - severityOrder(b.sev));
+
+  const counts = {critical:0,high:0,medium:0,low:0,info:0};
+  findings.forEach(f => counts[f.sev]++);
+  const total = findings.length;
+
+  // Score (0–100, lower = worse)
+  const score = Math.max(0, 100 - (counts.critical*30 + counts.high*15 + counts.medium*7 + counts.low*3));
+  const riskLevel = counts.critical > 0 ? 'CRITICAL' : counts.high > 0 ? 'HIGH' : counts.medium > 0 ? 'MEDIUM' : counts.low > 0 ? 'LOW' : 'CLEAN';
+  const riskColors = {CRITICAL:['#DE350B','#FFEBE6'],HIGH:['#E65100','#FFF3E0'],MEDIUM:['#FF991F','#FFF7E6'],LOW:['#00875A','#E3FCEF'],CLEAN:['#00875A','#E3FCEF']};
+  const [rc, rbg] = riskColors[riskLevel];
+  const stmtCount = (policy.Statement||[]).length;
+
+  document.getElementById('scoreCard').innerHTML = `
+    <div class="score-ring">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="28" fill="none" stroke="${rbg}" stroke-width="7"/>
+        <circle cx="36" cy="36" r="28" fill="none" stroke="${rc}" stroke-width="7"
+          stroke-dasharray="${Math.PI*56}" stroke-dashoffset="${Math.PI*56*(1-score/100)}"
+          stroke-linecap="round" style="transition:stroke-dashoffset 1s ease;"/>
+      </svg>
+      <div class="score-num" style="color:${rc}">${score}</div>
+    </div>
+    <div class="score-info">
+      <h3>Security Score</h3>
+      <p>${total} finding${total!==1?'s':''} across ${stmtCount} statement${stmtCount!==1?'s':''}</p>
+      <span class="risk-badge risk-${riskLevel.toLowerCase()}">${riskLevel} RISK</span>
+    </div>
+  `;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-cell"><div class="s-num c">${counts.critical}</div><div class="s-label">Critical</div></div>
+    <div class="stat-cell"><div class="s-num h">${counts.high}</div><div class="s-label">High</div></div>
+    <div class="stat-cell"><div class="s-num m">${counts.medium}</div><div class="s-label">Medium</div></div>
+    <div class="stat-cell"><div class="s-num l">${counts.low + counts.info}</div><div class="s-label">Low/Info</div></div>
+  `;
+
+  const fl = document.getElementById('findingsList');
+  if (total === 0) {
+    fl.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--green);">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <p style="font-weight:600;font-size:15px;">No issues found!</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:6px;">This policy follows least-privilege principles.</p>
+    </div>`;
+    return;
+  }
+
+  fl.innerHTML = findings.map((f,i) => `
+    <div class="finding-item" id="fi${i}">
+      <div class="finding-header" onclick="toggleFinding(${i})">
+        <span class="sev-dot sev-${f.sev}"></span>
+        <span class="finding-title">${f.title}</span>
+        <span class="finding-sev-label sev-label-${f.sev}">${f.sev.toUpperCase()}</span>
+        <svg class="finding-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="finding-body">
+        <div class="finding-desc">${f.desc}</div>
+        <div class="finding-location">${f.location}</div>
+        <div class="finding-rec">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span><strong>Fix:</strong> ${f.rec}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // auto-open first finding
+  if (findings.length) toggleFinding(0);
+}
+
+function toggleFinding(i) {
+  document.getElementById('fi'+i).classList.toggle('open');
+}
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+</script>
+</body>
+</html>

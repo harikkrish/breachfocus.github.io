@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firewall Rule Conflict Detector — BreachFocus Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#FAFAF8;--bg-card:#FFFFFF;--bg-dark:#0C1117;
+  --text:#1A1D23;--text-secondary:#5A5F6B;--text-muted:#9096A2;
+  --accent:#0066FF;--accent-light:#E8F0FF;--accent-dark:#0047B3;
+  --green:#00875A;--green-light:#E3FCEF;
+  --red:#DE350B;--red-light:#FFEBE6;
+  --amber:#FF991F;--amber-light:#FFF7E6;
+  --border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.15);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --shadow-md:0 4px 12px rgba(0,0,0,0.06);
+  --font:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --font-display:'Fraunces',Georgia,serif;
+  --max-w:1200px;--header-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);background:rgba(250,250,248,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:var(--max-w);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;color:var(--text);text-decoration:none;}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;color:white;font-family:var(--font-mono);font-weight:700;font-size:12px;}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-secondary);text-decoration:none;padding:7px 14px;border-radius:var(--radius-xs);border:1px solid var(--border);transition:all 0.2s;}
+.nav-back:hover{color:var(--text);border-color:var(--border-strong);}
+
+.tool-hero{padding:calc(var(--header-h) + 48px) 2rem 40px;max-width:var(--max-w);margin:0 auto;}
+.tool-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:var(--accent-light);color:var(--accent);font-size:12px;font-weight:600;font-family:var(--font-mono);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:16px;}
+.tool-hero h1{font-family:var(--font-display);font-size:clamp(28px,4vw,42px);font-weight:600;letter-spacing:-0.02em;margin-bottom:10px;}
+.tool-hero p{font-size:16px;color:var(--text-secondary);max-width:640px;}
+
+.tool-body{max-width:var(--max-w);margin:0 auto;padding:0 2rem 80px;}
+
+/* Rules table */
+.rules-card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:24px;overflow:hidden;}
+.rules-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.rules-header-left{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
+.rules-header-right{display:flex;gap:8px;}
+.btn-sm{padding:7px 16px;border-radius:var(--radius-xs);font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--text-secondary);transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.btn-sm:hover{color:var(--text);border-color:var(--border-strong);}
+.btn-sm.primary{background:var(--accent);color:white;border-color:var(--accent);}
+.btn-sm.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+.btn-sm.danger{color:var(--red);border-color:rgba(222,53,11,0.2);}
+.btn-sm.danger:hover{background:var(--red-light);}
+
+.rules-table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:#F7F7F5;}
+th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);white-space:nowrap;}
+td{padding:0;}
+tr.rule-row td{border-top:1px solid var(--border);}
+tr.rule-row:hover{background:#FAFAF8;}
+td input,td select{width:100%;padding:10px 14px;border:none;background:transparent;font-size:13px;font-family:var(--font-mono);color:var(--text);outline:none;}
+td input:focus,td select:focus{background:var(--accent-light);}
+td select{font-family:var(--font);}
+.td-action{width:40px;text-align:center;}
+.td-action button{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:8px;border-radius:var(--radius-xs);transition:all 0.2s;}
+.td-action button:hover{color:var(--red);background:var(--red-light);}
+.td-num{width:50px;}
+td.td-num input{text-align:center;font-weight:600;}
+.badge-allow{color:var(--green);font-weight:700;}
+.badge-deny{color:var(--red);font-weight:700;}
+
+/* Analysis */
+.analysis-grid{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;}
+.findings-panel{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.fp-header{padding:14px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.fp-body{padding:16px;}
+
+.finding-item{padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:10px;border-left:3px solid transparent;cursor:pointer;transition:opacity 0.2s;}
+.finding-item:hover{opacity:0.85;}
+.finding-item.conflict{background:var(--red-light);border-color:var(--red);}
+.finding-item.shadow{background:var(--amber-light);border-color:var(--amber);}
+.finding-item.redundant{background:#F0E6FF;border-color:#7C3AED;}
+.finding-item.risky{background:var(--accent-light);border-color:var(--accent);}
+.finding-item.ok{background:var(--green-light);border-color:var(--green);}
+.fi-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;}
+.finding-item.conflict .fi-type{color:var(--red);}
+.finding-item.shadow .fi-type{color:var(--amber);}
+.finding-item.redundant .fi-type{color:#7C3AED;}
+.finding-item.risky .fi-type{color:var(--accent);}
+.finding-item.ok .fi-type{color:var(--green);}
+.fi-title{font-size:13px;font-weight:600;}
+.fi-desc{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+
+.matrix-panel{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.mp-header{padding:14px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.mp-body{padding:16px;overflow-x:auto;}
+
+.matrix-table{width:100%;border-collapse:collapse;font-size:12px;}
+.matrix-table th,.matrix-table td{padding:8px 10px;text-align:center;border:1px solid var(--border);}
+.matrix-table th{background:#F7F7F5;font-weight:600;font-size:11px;color:var(--text-muted);}
+.matrix-table td{font-family:var(--font-mono);}
+.cell-allow{background:#E3FCEF;color:var(--green);font-weight:700;}
+.cell-deny{background:var(--red-light);color:var(--red);font-weight:700;}
+.cell-conflict{background:#FFF0F0;color:var(--red);font-weight:700;animation:pulse-bg 1.5s infinite;}
+@keyframes pulse-bg{0%,100%{background:#FFF0F0;}50%{background:var(--red-light);}}
+.cell-empty{color:var(--text-muted);}
+
+.stat-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.stat-chip{flex:1;min-width:70px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;}
+.stat-chip .n{font-size:18px;font-weight:700;font-family:var(--font-mono);}
+.stat-chip .l{font-size:11px;color:var(--text-muted);margin-top:1px;}
+
+.empty-analysis{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+
+@media(max-width:900px){.analysis-grid{grid-template-columns:1fr;}.tool-hero,.tool-body{padding-left:1rem;padding-right:1rem;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><div class="logo-icon">BF</div>BreachFocus</a>
+    <a href="../tools.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All tools
+    </a>
+  </div>
+</nav>
+
+<div class="tool-hero">
+  <div class="tool-badge">☁ Cloud &amp; Config</div>
+  <h1>Firewall Rule Conflict Detector</h1>
+  <p>Enter your firewall / security group rules to detect conflicts, shadowed rules, redundancies, and dangerous configurations before deploying.</p>
+</div>
+
+<div class="tool-body">
+  <div class="rules-card">
+    <div class="rules-header">
+      <div class="rules-header-left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Firewall Rules
+      </div>
+      <div class="rules-header-right">
+        <button class="btn-sm" onclick="loadDemo()">Load demo</button>
+        <button class="btn-sm" onclick="addRule()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add rule
+        </button>
+        <button class="btn-sm primary" onclick="analyze()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Analyze
+        </button>
+      </div>
+    </div>
+    <div class="rules-table-wrap">
+      <table>
+        <thead><tr>
+          <th class="td-num">#</th>
+          <th>Name / Description</th>
+          <th>Protocol</th>
+          <th>Source IP / CIDR</th>
+          <th>Dest IP / CIDR</th>
+          <th>Port(s)</th>
+          <th>Action</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="rulesBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="analysisArea">
+    <div class="empty-analysis">Add rules above and click Analyze to detect conflicts.</div>
+  </div>
+</div>
+
+<script>
+let rules = [];
+let ruleCounter = 0;
+
+const PROTOCOLS = ['Any','TCP','UDP','ICMP','HTTP','HTTPS','SSH','RDP','DNS','SMTP','FTP'];
+const RISKY_PORTS = {22:'SSH',23:'Telnet',3389:'RDP',21:'FTP',1433:'MSSQL',3306:'MySQL',5432:'PostgreSQL',27017:'MongoDB',6379:'Redis',9200:'Elasticsearch',2181:'Zookeeper'};
+
+function addRule(data={}) {
+  ruleCounter++;
+  const id = ruleCounter;
+  rules.push({ id, priority: rules.length+1, name: data.name||'', proto: data.proto||'TCP', src: data.src||'', dst: data.dst||'', port: data.port||'', action: data.action||'allow' });
+  renderTable();
+}
+
+function removeRule(id) {
+  rules = rules.filter(r=>r.id!==id);
+  rules.forEach((r,i)=>r.priority=i+1);
+  renderTable();
+}
+
+function getVal(id, field) {
+  const el = document.getElementById(`r_${id}_${field}`);
+  return el ? el.value : '';
+}
+
+function syncRules() {
+  rules.forEach(r => {
+    r.name = getVal(r.id,'name');
+    r.proto = getVal(r.id,'proto');
+    r.src = getVal(r.id,'src');
+    r.dst = getVal(r.id,'dst');
+    r.port = getVal(r.id,'port');
+    r.action = getVal(r.id,'action');
+  });
+}
+
+function renderTable() {
+  const tbody = document.getElementById('rulesBody');
+  tbody.innerHTML = rules.map(r => `
+    <tr class="rule-row">
+      <td class="td-num"><input type="number" id="r_${r.id}_pri" value="${r.priority}" min="1" onchange="reorder(${r.id},this.value)" style="font-weight:600;text-align:center;width:50px;"></td>
+      <td><input type="text" id="r_${r.id}_name" value="${r.name}" placeholder="Rule name…"></td>
+      <td><select id="r_${r.id}_proto">${PROTOCOLS.map(p=>`<option ${r.proto===p?'selected':''}>${p}</option>`).join('')}</select></td>
+      <td><input type="text" id="r_${r.id}_src" value="${r.src}" placeholder="0.0.0.0/0"></td>
+      <td><input type="text" id="r_${r.id}_dst" value="${r.dst}" placeholder="10.0.0.0/8"></td>
+      <td><input type="text" id="r_${r.id}_port" value="${r.port}" placeholder="80, 443, 8080-9000"></td>
+      <td><select id="r_${r.id}_action" style="font-weight:700;color:${r.action==='allow'?'var(--green)':'var(--red)'}">
+        <option value="allow" ${r.action==='allow'?'selected':''}>Allow</option>
+        <option value="deny" ${r.action==='deny'?'selected':''}>Deny</option>
+      </select></td>
+      <td class="td-action"><button onclick="removeRule(${r.id})" title="Remove">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button></td>
+    </tr>`).join('');
+}
+
+function reorder(id, newPri) {
+  const r = rules.find(r=>r.id===id);
+  if (r) r.priority = parseInt(newPri)||1;
+  rules.sort((a,b)=>a.priority-b.priority);
+  rules.forEach((r,i)=>r.priority=i+1);
+  renderTable();
+}
+
+function loadDemo() {
+  rules = []; ruleCounter = 0;
+  const demo = [
+    { name:'Allow HTTP inbound', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.1.0/24', port:'80', action:'allow' },
+    { name:'Allow HTTPS inbound', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.1.0/24', port:'443', action:'allow' },
+    { name:'Block all inbound', proto:'Any', src:'0.0.0.0/0', dst:'0.0.0.0/0', port:'any', action:'deny' },
+    { name:'Allow SSH from office', proto:'TCP', src:'203.0.113.0/24', dst:'10.0.1.0/24', port:'22', action:'allow' },
+    { name:'Block SSH from internet', proto:'TCP', src:'0.0.0.0/0', dst:'0.0.0.0/0', port:'22', action:'deny' },
+    { name:'Allow all internal', proto:'Any', src:'10.0.0.0/8', dst:'10.0.0.0/8', port:'any', action:'allow' },
+    { name:'Allow RDP (DANGEROUS)', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.2.10', port:'3389', action:'allow' },
+    { name:'Allow HTTP again (dup)', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.1.0/24', port:'80', action:'allow' },
+    { name:'Deny internal 3306', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.3.5', port:'3306', action:'deny' },
+    { name:'Allow MySQL (conflict)', proto:'TCP', src:'10.0.0.0/8', dst:'10.0.3.5', port:'3306', action:'allow' },
+  ];
+  demo.forEach(d => addRule(d));
+}
+
+function parsePorts(portStr) {
+  if (!portStr || portStr.toLowerCase()==='any') return null; // null = any
+  const parts = portStr.split(',').map(s=>s.trim());
+  const nums = new Set();
+  parts.forEach(p => {
+    if (p.includes('-')) {
+      const [a,b] = p.split('-').map(Number);
+      for (let i=a;i<=Math.min(b,a+100);i++) nums.add(i); // limit range scan
+    } else {
+      const n = parseInt(p);
+      if (!isNaN(n)) nums.add(n);
+    }
+  });
+  return nums;
+}
+
+function portsOverlap(p1, p2) {
+  if (!p1 || !p2) return true; // any overlaps with anything
+  for (const p of p1) if (p2.has(p)) return true;
+  return false;
+}
+
+function cidrOverlap(c1, c2) {
+  if (!c1||!c2||c1==='any'||c2==='any') return true;
+  if (c1==='0.0.0.0/0'||c2==='0.0.0.0/0') return true;
+  if (c1===c2) return true;
+  // Simple prefix check
+  const getPrefix = c => c.includes('/') ? parseInt(c.split('/')[1]) : 32;
+  const getNet = c => c.split('/')[0].split('.').slice(0, Math.ceil(getPrefix(c)/8)).join('.');
+  const n1 = getNet(c1), n2 = getNet(c2);
+  return n1.startsWith(n2) || n2.startsWith(n1);
+}
+
+function analyze() {
+  syncRules();
+  if (rules.length < 2) {
+    document.getElementById('analysisArea').innerHTML = '<div class="empty-analysis">Add at least 2 rules to analyze conflicts.</div>';
+    return;
+  }
+
+  const findings = [];
+
+  for (let i = 0; i < rules.length; i++) {
+    for (let j = i+1; j < rules.length; j++) {
+      const a = rules[i], b = rules[j];
+      const portsA = parsePorts(a.port), portsB = parsePorts(b.port);
+      const protoMatch = a.proto===b.proto || a.proto==='Any' || b.proto==='Any';
+      const srcOverlap = cidrOverlap(a.src, b.src);
+      const dstOverlap = cidrOverlap(a.dst, b.dst);
+      const portOverlap = portsOverlap(portsA, portsB);
+
+      if (protoMatch && srcOverlap && dstOverlap && portOverlap) {
+        if (a.action !== b.action) {
+          // Conflict
+          findings.push({ type:'conflict', title:`Rules #${a.priority} & #${b.priority} conflict`, desc:`"${a.name||'Rule '+a.priority}" (${a.action.toUpperCase()}) and "${b.name||'Rule '+b.priority}" (${b.action.toUpperCase()}) match overlapping traffic. Outcome depends on rule priority.`, rules:[a.id,b.id] });
+        } else if (a.src===b.src && a.dst===b.dst && a.port===b.port && a.proto===b.proto) {
+          // Exact duplicate
+          findings.push({ type:'redundant', title:`Duplicate rules #${a.priority} & #${b.priority}`, desc:`"${a.name||'Rule '+a.priority}" and "${b.name||'Rule '+b.priority}" are exact duplicates. Remove one.`, rules:[a.id,b.id] });
+        } else if (a.priority < b.priority && a.src==='0.0.0.0/0') {
+          // Shadowing
+          findings.push({ type:'shadow', title:`Rule #${b.priority} shadowed by #${a.priority}`, desc:`"${b.name||'Rule '+b.priority}" may never be reached because higher-priority rule #${a.priority} with broader scope matches the same traffic first.`, rules:[a.id,b.id] });
+        }
+      }
+    }
+
+    // Risky rule checks
+    const r = rules[i];
+    const ports = parsePorts(r.port);
+    if (r.action === 'allow' && (r.src==='0.0.0.0/0' || !r.src)) {
+      const riskyMatches = [];
+      if (ports) {
+        ports.forEach(p => { if (RISKY_PORTS[p]) riskyMatches.push(`${RISKY_PORTS[p]}(${p})`); });
+      } else {
+        riskyMatches.push('all ports');
+      }
+      if (riskyMatches.length > 0 || !ports) {
+        findings.push({ type:'risky', title:`Rule #${r.priority} allows dangerous inbound from internet`, desc:`"${r.name||'Rule '+r.priority}" allows ${r.proto} from 0.0.0.0/0 on ${riskyMatches.join(', ')||'all ports'}. This exposes sensitive services to the internet.`, rules:[r.id] });
+      }
+    }
+
+    // Allow all / any rules
+    if (r.action==='allow' && (r.proto==='Any'||!r.proto) && (!r.port||r.port.toLowerCase()==='any') && (r.src==='0.0.0.0/0'||!r.src)) {
+      findings.push({ type:'conflict', title:`Rule #${r.priority} is a full allow-all`, desc:`"${r.name||'Rule '+r.priority}" allows ALL traffic from all sources. This is equivalent to no firewall.`, rules:[r.id] });
+    }
+  }
+
+  // OK state
+  if (findings.length === 0) {
+    findings.push({ type:'ok', title:'No conflicts detected', desc:'No overlapping rules, duplicates, or obvious misconfigurations found.', rules:[] });
+  }
+
+  const conflicts = findings.filter(f=>f.type==='conflict').length;
+  const shadows = findings.filter(f=>f.type==='shadow').length;
+  const redundants = findings.filter(f=>f.type==='redundant').length;
+  const risky = findings.filter(f=>f.type==='risky').length;
+
+  // Build matrix (simplified — source vs dest by rule)
+  const matrixHtml = buildMatrix();
+
+  document.getElementById('analysisArea').innerHTML = `
+    <div class="analysis-grid">
+      <div>
+        <div class="findings-panel">
+          <div class="fp-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Findings (${findings.length})
+          </div>
+          <div class="fp-body">
+            <div class="stat-row">
+              <div class="stat-chip"><div class="n" style="color:var(--red)">${conflicts}</div><div class="l">Conflicts</div></div>
+              <div class="stat-chip"><div class="n" style="color:var(--amber)">${shadows}</div><div class="l">Shadowed</div></div>
+              <div class="stat-chip"><div class="n" style="color:#7C3AED">${redundants}</div><div class="l">Duplicate</div></div>
+              <div class="stat-chip"><div class="n" style="color:var(--accent)">${risky}</div><div class="l">Risky</div></div>
+            </div>
+            ${findings.map(f=>`
+              <div class="finding-item ${f.type}">
+                <div class="fi-type">${f.type}</div>
+                <div class="fi-title">${f.title}</div>
+                <div class="fi-desc">${f.desc}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="matrix-panel">
+          <div class="mp-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Rule Overview Matrix
+          </div>
+          <div class="mp-body">${matrixHtml}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildMatrix() {
+  if (!rules.length) return '<div class="empty-analysis">No rules to display.</div>';
+  const cols = ['Priority','Name','Protocol','Source','Destination','Port','Action','Issues'];
+  const conflictedIds = new Set();
+
+  // Mark conflicted rules
+  for (let i=0;i<rules.length;i++) for (let j=i+1;j<rules.length;j++) {
+    const a=rules[i],b=rules[j];
+    if (a.action!==b.action && cidrOverlap(a.src,b.src) && cidrOverlap(a.dst,b.dst) && (a.proto===b.proto||a.proto==='Any'||b.proto==='Any')) {
+      conflictedIds.add(a.id); conflictedIds.add(b.id);
+    }
+  }
+
+  let html = '<table class="matrix-table"><thead><tr>';
+  cols.forEach(c=>`<th>${c}</th>`).forEach(h=>html+=h);
+  html += '</tr></thead><tbody>';
+
+  rules.forEach(r => {
+    const hasConflict = conflictedIds.has(r.id);
+    const isRisky = r.action==='allow' && (r.src==='0.0.0.0/0'||!r.src);
+    const cls = hasConflict ? 'cell-conflict' : r.action==='allow'?'cell-allow':'cell-deny';
+    html += `<tr>
+      <td style="font-weight:700">${r.priority}</td>
+      <td style="text-align:left;font-family:var(--font);font-size:13px">${r.name||'—'}</td>
+      <td>${r.proto||'Any'}</td>
+      <td>${r.src||'any'}</td>
+      <td>${r.dst||'any'}</td>
+      <td>${r.port||'any'}</td>
+      <td class="${cls}">${r.action.toUpperCase()}</td>
+      <td style="font-size:12px;">${hasConflict?'⚡ Conflict':isRisky?'⚠ Risky':'✓'}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+// Init with a couple empty rows
+addRule({ name:'Allow HTTPS', proto:'TCP', src:'0.0.0.0/0', dst:'10.0.1.0/24', port:'443', action:'allow' });
+addRule({ name:'Block all', proto:'Any', src:'0.0.0.0/0', dst:'0.0.0.0/0', port:'any', action:'deny' });
+</script>
+</body>
+</html>
