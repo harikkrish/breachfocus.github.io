@@ -58,56 +58,6 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.25)}
 .claim-note{font-size:12px;margin-left:auto;flex-shrink:0}
 
 @media(max-width:600px){.hero,.body{padding-left:1rem;padding-right:1rem}}
-
-/* ── DARK MODE ── */
-[data-theme="dark"] {
-  --bg: #0C1117;
-  --bg-card: #151C25;
-  --bg-dark: #0C1117;
-  --bg-dark-card: #151C25;
-  --text: #E6EDF3;
-  --text-secondary: #8B949E;
-  --text-muted: #484F58;
-  --border: rgba(255,255,255,0.07);
-  --border-strong: rgba(255,255,255,0.14);
-  --accent-light: #1F3A5F;
-  --accent-dark: #58A6FF;
-  --green-light: #1A3526;
-  --red-light: #3D1A1A;
-  --amber-light: #3D2E0A;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.4),0 2px 4px rgba(0,0,0,.3);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.4);
-}
-[data-theme="dark"] body { background: var(--bg); color: var(--text); }
-[data-theme="dark"] .nav { background: rgba(12,17,23,0.92); border-bottom-color: var(--border); }
-[data-theme="dark"] .nav-links a:hover { background: rgba(255,255,255,0.06); }
-[data-theme="dark"] .nav-links a.active { background: var(--accent-light); color: var(--accent-dark); }
-[data-theme="dark"] .nav-cta { background: var(--text) !important; }
-[data-theme="dark"] .nav-links.open { background: rgba(12,17,23,0.98); }
-[data-theme="dark"] .tool-row:hover { background: rgba(255,255,255,0.03); }
-[data-theme="dark"] .tool-tag { background: rgba(255,255,255,0.06); border-color: var(--border); }
-[data-theme="dark"] .tool-status.status-soon { background: rgba(255,255,255,0.06); border-color: var(--border); }
-[data-theme="dark"] .section-label { color: var(--accent-dark); }
-[data-theme="dark"] .section-label::before { background: var(--accent-dark); }
-[data-theme="dark"] .footer { border-top-color: var(--border); }
-[data-theme="dark"] .card, [data-theme="dark"] .skill-card, [data-theme="dark"] .project-card, [data-theme="dark"] .blog-card { background: var(--bg-card); border-color: var(--border); }
-[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: #151C25; border-color: var(--border); color: var(--text); }
-[data-theme="dark"] .panel, [data-theme="dark"] .result-card, [data-theme="dark"] .output-panel { background: #151C25; border-color: var(--border); }
-[data-theme="dark"] .theme-toggle-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-
-.theme-toggle-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: var(--radius-xs);
-  background: none; border: 1px solid var(--border);
-  cursor: pointer; color: var(--text-secondary);
-  transition: all 0.2s; flex-shrink: 0; margin-right: 4px;
-}
-.theme-toggle-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
-.theme-toggle-btn .icon-moon { display: none; }
-.theme-toggle-btn .icon-sun { display: block; }
-[data-theme="dark"] .theme-toggle-btn .icon-moon { display: block; }
-[data-theme="dark"] .theme-toggle-btn .icon-sun { display: none; }
 </style>
 </head>
 <body>
@@ -134,12 +84,6 @@ textarea::placeholder,input::placeholder{color:rgba(255,255,255,.25)}
 </div>
 
 <script>
-
-(function(){var s=localStorage.getItem("bf-theme");var p=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("data-theme",s||(p?"dark":"light"));})();
-function bfToggleTheme(){var c=document.documentElement.getAttribute("data-theme")||"light";var n=c==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);localStorage.setItem("bf-theme",n);}
-document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("themeToggle");if(b)b.addEventListener("click",bfToggleTheme);});
-
-
 const DEMO_JWT = 'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzk5MjIsImlzcyI6Imh0dHA6Ly9hdXRoLmludGVybmFsIiwiYXVkIjoiaHR0cDovL2FwaS5pbnRlcm5hbCJ9.';
 function loadDemo() { document.getElementById('jwtInput').value = DEMO_JWT; decode(); }
 
