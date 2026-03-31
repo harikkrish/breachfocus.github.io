@@ -868,30 +868,33 @@ html { scroll-padding-top: 80px; }
       </div>
 
       <div class="contact-form">
+        <input type="hidden" id="w3f_key" value="00f858f3-bfd4-40a6-a736-496de019b1f9">
+        <input type="checkbox" name="botcheck" id="botcheck" style="display:none" tabindex="-1" autocomplete="off">
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" placeholder="Your name">
+          <input type="text" id="name" name="name" placeholder="Your name" required>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="you@company.com">
+          <input type="email" id="email" name="email" placeholder="you@company.com" required>
         </div>
         <div class="form-group">
           <label for="type">I'm interested in</label>
-          <select id="type">
+          <select id="type" name="topic">
             <option value="">Select a topic</option>
-            <option value="consulting">Security consulting</option>
-            <option value="architecture">Cloud architecture review</option>
-            <option value="assessment">Security assessment</option>
-            <option value="speaking">Speaking / Advisory</option>
-            <option value="other">Other</option>
+            <option value="Security consulting">Security consulting</option>
+            <option value="Cloud architecture review">Cloud architecture review</option>
+            <option value="Security assessment">Security assessment</option>
+            <option value="Speaking / Advisory">Speaking / Advisory</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div class="form-group">
           <label for="message">Message</label>
-          <textarea id="message" placeholder="Tell me about your project or challenge..."></textarea>
+          <textarea id="message" name="message" placeholder="Tell me about your project or challenge..." required></textarea>
         </div>
-        <button class="form-submit" type="button">Send message</button>
+        <button class="form-submit" id="contactSubmit" type="button">Send message</button>
+        <div id="formStatus" style="margin-top:14px;font-size:13px;min-height:20px;font-weight:500"></div>
       </div>
     </div>
   </div>
@@ -951,26 +954,49 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Simple form handler (static placeholder)
-document.querySelector('.form-submit').addEventListener('click', function() {
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const msg = document.getElementById('message').value;
-  if (!name || !email || !msg) {
-    this.textContent = 'Please fill all fields';
-    this.style.background = '#DE350B';
-    setTimeout(() => {
-      this.textContent = 'Send message';
-      this.style.background = '';
-    }, 2000);
-    return;
+// Contact form — Web3Forms
+document.getElementById('contactSubmit').addEventListener('click', async function() {
+  var btn = this, st = document.getElementById('formStatus');
+  var nm = document.getElementById('name').value.trim();
+  var em = document.getElementById('email').value.trim();
+  var ms = document.getElementById('message').value.trim();
+  var tp = document.getElementById('type').value;
+  var key = document.getElementById('w3f_key').value;
+  if (document.getElementById('botcheck').checked) return;
+  st.style.display = 'none';
+  if (!nm || !em || !ms) {
+    st.style.display = 'block'; st.style.color = '#DE350B';
+    st.textContent = 'Please fill in your name, email and message.'; return;
   }
-  this.textContent = 'Message sent ✓';
-  this.style.background = '#00875A';
-  setTimeout(() => {
-    this.textContent = 'Send message';
-    this.style.background = '';
-  }, 3000);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+    st.style.display = 'block'; st.style.color = '#DE350B';
+    st.textContent = 'Please enter a valid email address.'; return;
+  }
+  var subj = tp ? 'BreachFocus enquiry: ' + tp : 'New enquiry via BreachFocus';
+  btn.disabled = true; btn.textContent = 'Sending…'; btn.style.opacity = '0.7';
+  try {
+    var res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ access_key: key, subject: subj, from_name: 'BreachFocus Contact Form', name: nm, email: em, message: ms, topic: tp || 'Not specified' })
+    });
+    var data = await res.json();
+    if (data.success) {
+      btn.textContent = 'Message sent ✓'; btn.style.background = '#00875A'; btn.style.opacity = '1';
+      st.style.display = 'block'; st.style.color = '#00875A';
+      st.textContent = 'Thanks ' + nm + '! I’ll get back to you within 1–2 business days.';
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('message').value = '';
+      document.getElementById('type').value = '';
+      setTimeout(function() { btn.textContent = 'Send message'; btn.style.background = ''; btn.disabled = false; }, 4000);
+    } else { throw new Error(data.message || 'Submission failed'); }
+  } catch(err) {
+    btn.disabled = false; btn.textContent = 'Send message'; btn.style.opacity = '1';
+    st.style.display = 'block'; st.style.color = '#DE350B';
+    st.textContent = 'Something went wrong. Email hari@breachfocus.com directly.';
+    console.error('Web3Forms:', err);
+  }
 });</script>
 </body>
 </html>
